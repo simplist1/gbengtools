@@ -56,7 +56,7 @@
     "title": "Standalone downloads",
     "description": "Individual installers and scripts stay on the standalone catalog for now. This site becomes the clean front page for suite installers and major releases.",
     "buttonText": "Open Standalone Catalog",
-    "buttonUrl": "#"
+    "buttonUrl": "https://simplist1.github.io/any2dxf_releases/"
   },
   "toolCatalog": {
     "title": "Tool catalog",
@@ -69,7 +69,7 @@
   },
   "adminSection": {
     "title": "Admin editor",
-    "caption": "temporary static editor",
-    "note": "This temporary editor exports data/site.json for manual commit. Later it can be replaced with GitHub login and Cloudflare Functions."
+    "caption": "browser save plus JSON export",
+    "note": "Use the URL-code editor to change site text, suite panels, tool rows, and GitHub Release links. Save browser preview for quick testing, then download or copy data/site.json when you want to commit the public version."
   }
 }
