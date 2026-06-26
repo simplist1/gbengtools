@@ -1,1 +1,75 @@
-{}
+{
+  "site": {
+    "title": "GB Engineering Tools",
+    "subtitle": "CAD / Survey / Civil Utilities",
+    "githubUrl": "https://github.com/simplist1/gbengtools",
+    "standaloneUrl": "https://simplist1.github.io/any2dxf_releases/",
+    "footerLeft": "GB Engineering Tools",
+    "footerRight": "apps.geodeta.us"
+  },
+  "nav": {
+    "suites": "Suites",
+    "tools": "Tools",
+    "standalone": "Standalone",
+    "admin": "Admin",
+    "github": "GitHub"
+  },
+  "hero": {
+    "kicker": "Production CAD Utility Portal",
+    "title": "Surveying and Civil 3D tools without the bloat.",
+    "body": "Suite installers for legacy AutoCAD / Land Desktop workflows and modern Civil 3D setups. Built around field-to-CAD production, point import, DXF output, adjustment tools, and deployment packages.",
+    "primaryButton": "Download Suites",
+    "secondaryButton": "Standalone Installers",
+    "thirdButton": "Included Tools"
+  },
+  "suitesSection": {
+    "title": "Suite installers",
+    "caption": "centralized deployment packages"
+  },
+  "suites": [
+    {
+      "name": "GB Tools Suite 2000",
+      "subtitle": "AutoCAD / Land Desktop 2000",
+      "description": "Installer package for old-school production machines that need reliable LISP/VBA utilities and DXF-based workflows.",
+      "tags": ["AutoCAD 2000", "Land Desktop", "VBA", "LISP"],
+      "downloadText": "Download Suite",
+      "downloadUrl": "#",
+      "notesText": "Release Notes",
+      "notesUrl": "#"
+    },
+    {
+      "name": "GB Tools Suite 2027",
+      "subtitle": "Civil 3D / AutoCAD 2027",
+      "description": "Installer package for modern Civil 3D workflows using .NET tools, LISP helpers, and bundle-style deployment.",
+      "tags": ["Civil 3D 2027", "AutoCAD 2027", ".NET", "LISP"],
+      "downloadText": "Download Suite",
+      "downloadUrl": "#",
+      "notesText": "Release Notes",
+      "notesUrl": "#"
+    }
+  ],
+  "toolsSection": {
+    "title": "Included tools",
+    "caption": "apps, scripts, and workflow helpers"
+  },
+  "standalonePanel": {
+    "title": "Standalone downloads",
+    "description": "Individual installers and scripts stay on the standalone catalog for now. This site becomes the clean front page for suite installers and major releases.",
+    "buttonText": "Open Standalone Catalog",
+    "buttonUrl": "#"
+  },
+  "toolCatalog": {
+    "title": "Tool catalog",
+    "rows": [
+      {"name": "Any2DXF", "description": "Point import and DXF export for legacy and modern CAD workflows."},
+      {"name": "LS Adjust", "description": "Move and rotate selected CAD objects to match control points."},
+      {"name": "C3D Tools", "description": "Civil 3D 2027 utilities, bundle loading, and command helpers."},
+      {"name": "LISP Pack", "description": "Startup scripts, menu targets, toolbar commands, and CAD helpers."}
+    ]
+  },
+  "adminSection": {
+    "title": "Admin editor",
+    "caption": "temporary static editor",
+    "note": "This temporary editor exports data/site.json for manual commit. Later it can be replaced with GitHub login and Cloudflare Functions."
+  }
+}
