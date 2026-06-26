@@ -116,16 +116,13 @@ function getBrowserPreview() {
   }
 }
 
-const previewMode = new URLSearchParams(location.search).get("preview") === "1";
-
 fetch("data/site.json?cache=" + Date.now())
   .then(res => {
     if (!res.ok) throw new Error("Could not load data/site.json");
     return res.json();
   })
   .then(fileData => {
-    const previewData = previewMode ? getBrowserPreview() : null;
-    render(previewData || fileData);
+    render(getBrowserPreview() || fileData);
   })
   .catch(error => {
     console.error(error);
