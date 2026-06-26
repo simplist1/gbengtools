@@ -61,6 +61,9 @@ function render(rawData) {
   setText("heroPrimary", data.hero.primaryButton);
   setText("heroSecondary", data.hero.secondaryButton);
   setText("heroThird", data.hero.thirdButton);
+  setHref("heroPrimary", data.site.suitesUrl || "#suites");
+  setHref("heroSecondary", data.site.standaloneUrl || data.standalonePanel.buttonUrl || "#standalone");
+  setHref("heroThird", data.site.toolsUrl || "#tools");
 
   setText("suitesTitle", data.suitesSection.title);
   setText("suitesCaption", data.suitesSection.caption);
