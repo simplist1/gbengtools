@@ -26,10 +26,22 @@ function cleanData(data = {}) {
   };
 }
 
+function looksUsable(data) {
+  return !!(
+    data &&
+    data.site &&
+    data.site.title &&
+    data.hero &&
+    data.hero.title &&
+    Array.isArray(data.suites) &&
+    data.suites.length
+  );
+}
+
 function render(rawData) {
   const data = cleanData(rawData);
 
-  document.title = data.site.title || "GB Engineering Tools";
+  document.title = data.site.title || document.title || "GB Engineering Tools";
 
   setText("brandTitle", data.site.title);
   setText("brandSubtitle", data.site.subtitle);
@@ -56,7 +68,7 @@ function render(rawData) {
   setText("toolsCaption", data.toolsSection.caption);
 
   const suiteGrid = document.getElementById("suiteGrid");
-  if (suiteGrid) {
+  if (suiteGrid && data.suites.length) {
     suiteGrid.innerHTML = data.suites.map(suite => `
       <article class="card">
         <h3>${esc(suite.name)}</h3>
@@ -78,8 +90,8 @@ function render(rawData) {
 
   setText("toolCatalogTitle", data.toolCatalog.title);
   const toolList = document.getElementById("toolList");
-  if (toolList) {
-    const rows = Array.isArray(data.toolCatalog.rows) ? data.toolCatalog.rows : [];
+  const rows = Array.isArray(data.toolCatalog.rows) ? data.toolCatalog.rows : [];
+  if (toolList && rows.length) {
     toolList.innerHTML = rows.map(row => `
       <div class="tool-row">
         <strong>${esc(row.name)}</strong>
@@ -93,23 +105,28 @@ function render(rawData) {
   setText("adminNote", data.adminSection.note);
 }
 
-function getBrowserOverride() {
+function getBrowserPreview() {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
-    return saved ? JSON.parse(saved) : null;
+    const parsed = saved ? JSON.parse(saved) : null;
+    return looksUsable(parsed) ? parsed : null;
   } catch (error) {
     console.warn("Ignoring broken browser-saved site data", error);
     return null;
   }
 }
 
+const previewMode = new URLSearchParams(location.search).get("preview") === "1";
+
 fetch("data/site.json?cache=" + Date.now())
   .then(res => {
     if (!res.ok) throw new Error("Could not load data/site.json");
     return res.json();
   })
-  .then(fileData => render(getBrowserOverride() || fileData))
+  .then(fileData => {
+    const previewData = previewMode ? getBrowserPreview() : null;
+    render(previewData || fileData);
+  })
   .catch(error => {
     console.error(error);
-    document.body.insertAdjacentHTML("beforeend", '<div class="site"><section><div class="note">Could not load data/site.json.</div></section></div>');
   });
