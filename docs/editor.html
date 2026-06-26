@@ -22,7 +22,7 @@
         <button class="btn primary" id="unlockBtn">Unlock</button>
         <a class="btn" href="index.html">Back to site</a>
       </div>
-      <p class="mini">If JavaScript fails, this screen still shows instead of a blank page.</p>
+      <p class="mini">This now uses <b>data/site.js</b>, not a JSON fetch.</p>
     </div>
   </div>
 
@@ -31,13 +31,13 @@
       <div>
         <div class="eyebrow">URL-code admin editor</div>
         <h1>GB Engineering Tools Editor</h1>
-        <p>Every public text field is editable. Save browser preview for testing, then download/copy <b>site.json</b> for GitHub.</p>
+        <p>Every public text field is editable. Save browser preview for testing, then download/copy <b>site.js</b> for GitHub.</p>
       </div>
       <div class="toolbar">
         <button class="btn primary" id="saveBtn">Save Browser Preview</button>
         <button class="btn" id="previewBtn">Open Preview</button>
-        <button class="btn" id="downloadBtn">Download site.json</button>
-        <button class="btn" id="copyBtn">Copy JSON</button>
+        <button class="btn" id="downloadBtn">Download site.js</button>
+        <button class="btn" id="copyBtn">Copy site.js</button>
         <button class="btn bad" id="clearBtn">Clear Browser Save</button>
       </div>
     </div>
@@ -45,18 +45,19 @@
     <div class="layout">
       <section class="panel" id="form"></section>
       <aside class="panel side">
-        <h2>Export JSON</h2>
+        <h2>Export site.js</h2>
         <p id="status" class="status">Loading...</p>
         <textarea id="jsonBox" spellcheck="false"></textarea>
         <div class="footer-actions">
           <button class="btn" id="loadJsonBtn">Load From Box</button>
           <button class="btn" id="resetBtn">Reset From File</button>
         </div>
-        <p class="mini">Paste GitHub Release asset/page URLs into the download and notes URL fields.</p>
+        <p class="mini">Replace <b>docs/data/site.js</b> with this. Paste GitHub Release asset/page URLs into the download and notes URL fields.</p>
       </aside>
     </div>
   </main>
 
+  <script src="data/site.js"></script>
   <script>
     var STORAGE_KEY = "gbengtools.siteData";
     var VALID_CODES = ["gbadmin", "pop123"];
@@ -72,7 +73,7 @@
       toolsSection:{title:"Included tools",caption:"apps, scripts, and workflow helpers"},
       standalonePanel:{title:"Standalone downloads",description:"Individual installers and scripts stay on the standalone catalog for now. This site becomes the clean front page for suite installers and major releases.",buttonText:"Open Standalone Catalog",buttonUrl:"https://simplist1.github.io/any2dxf_releases/"},
       toolCatalog:{title:"Tool catalog",rows:[{name:"Any2DXF",description:"Point import and DXF export for legacy and modern CAD workflows."},{name:"LS Adjust",description:"Move and rotate selected CAD objects to match control points."},{name:"C3D Tools",description:"Civil 3D 2027 utilities, bundle loading, and command helpers."},{name:"LISP Pack",description:"Startup scripts, menu targets, toolbar commands, and CAD helpers."}]},
-      adminSection:{title:"Admin editor",caption:"browser save plus JSON export",note:"Use the URL-code editor to change site text, suite panels, tool rows, and GitHub Release links. Save browser preview for quick testing, then download or copy data/site.json when you want to commit the public version."}
+      adminSection:{title:"Admin editor",caption:"browser save plus JS data export",note:"Use the URL-code editor to change site text, suite panels, tool rows, and GitHub Release links. Save browser preview for quick testing, then download or copy data/site.js when you want to commit the public version."}
     };
 
     function $(id){ return document.getElementById(id); }
@@ -86,6 +87,12 @@
       out.suites = Array.isArray(src.suites) ? src.suites : out.suites;
       out.toolCatalog.rows = src.toolCatalog && Array.isArray(src.toolCatalog.rows) ? src.toolCatalog.rows : out.toolCatalog.rows;
       return out;
+    }
+    function toSiteJs(obj){ return "window.GB_SITE_DATA = " + JSON.stringify(obj,null,2) + ";\n"; }
+    function parseDataText(text){
+      var t = String(text || '').trim();
+      t = t.replace(/^window\.GB_SITE_DATA\s*=\s*/, '').replace(/;\s*$/, '');
+      return JSON.parse(t);
     }
     function get(path){ return path.split('.').reduce(function(o,p){ return o ? o[p] : ''; }, data); }
     function set(path,value){
@@ -102,7 +109,7 @@
     function group(title){ var g = document.createElement('div'); g.className='group'; var h=document.createElement('h2'); h.textContent=title; g.appendChild(h); return g; }
     function grid(parent){ var d=document.createElement('div'); d.className='grid'; parent.appendChild(d); return d; }
     function button(text, cls, fn){ var b=document.createElement('button'); b.className='btn '+(cls||''); b.textContent=text; b.onclick=fn; return b; }
-    function updateBox(){ $('jsonBox').value = JSON.stringify(data,null,2); }
+    function updateBox(){ $('jsonBox').value = toSiteJs(data); }
     function status(msg,kind){ $('status').textContent=msg; $('status').className='status '+(kind||''); }
 
     function render(){
@@ -124,7 +131,7 @@
     document.addEventListener('input', function(e){
       var p = e.target.getAttribute('data-path'); if(!p) return;
       if(e.target.getAttribute('data-tags')) set(p, e.target.value.split(',').map(function(x){return x.trim();}).filter(Boolean)); else set(p, e.target.value);
-      updateBox(); status('Edited. Save browser preview or export JSON when ready.');
+      updateBox(); status('Edited. Save browser preview or export site.js when ready.');
     });
 
     function loadSaved(){ try{ var s=localStorage.getItem(STORAGE_KEY); return s ? JSON.parse(s) : null; }catch(e){ return null; } }
@@ -132,17 +139,20 @@
       var params = new URLSearchParams(location.search); var code = params.get('code') || '';
       if(VALID_CODES.indexOf(code) === -1) return;
       $('locked').classList.add('hide'); $('app').classList.remove('hide');
-      fetch('data/site.json?cache=' + Date.now()).then(function(r){return r.ok ? r.json() : DEFAULT_DATA;}).then(function(j){ fileData=clean(j); data=clean(loadSaved() || fileData); render(); status(loadSaved() ? 'Loaded browser-saved preview data.' : 'Loaded data/site.json.','good'); }).catch(function(){ fileData=clean(DEFAULT_DATA); data=clean(loadSaved() || fileData); render(); status('Loaded default fallback data because data/site.json failed.','bad'); });
+      fileData = clean(window.GB_SITE_DATA || DEFAULT_DATA);
+      data = clean(loadSaved() || fileData);
+      render();
+      status(loadSaved() ? 'Loaded browser-saved preview data.' : 'Loaded data/site.js.','good');
     }
 
     $('unlockBtn').onclick=function(){ var code=$('codeInput').value.trim(); if(VALID_CODES.indexOf(code)!==-1) location.href='editor.html?code='+encodeURIComponent(code); };
     $('saveBtn').onclick=function(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(data,null,2)); status('Saved in this browser. Preview will use this data.','good'); };
     $('previewBtn').onclick=function(){ window.open('index.html','_blank'); };
-    $('downloadBtn').onclick=function(){ var blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}); var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='site.json'; a.click(); URL.revokeObjectURL(a.href); status('Downloaded site.json.','good'); };
-    $('copyBtn').onclick=function(){ navigator.clipboard.writeText(JSON.stringify(data,null,2)).then(function(){status('Copied JSON.','good');}); };
+    $('downloadBtn').onclick=function(){ var blob=new Blob([toSiteJs(data)],{type:'application/javascript'}); var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='site.js'; a.click(); URL.revokeObjectURL(a.href); status('Downloaded site.js.','good'); };
+    $('copyBtn').onclick=function(){ navigator.clipboard.writeText(toSiteJs(data)).then(function(){status('Copied site.js.','good');}); };
     $('clearBtn').onclick=function(){ localStorage.removeItem(STORAGE_KEY); status('Browser preview save cleared.','good'); };
-    $('loadJsonBtn').onclick=function(){ try{ data=clean(JSON.parse($('jsonBox').value)); render(); status('Loaded JSON from box.','good'); }catch(e){ status('Invalid JSON. Nothing changed.','bad'); } };
-    $('resetBtn').onclick=function(){ data=clean(fileData || DEFAULT_DATA); render(); status('Reset from file/default.','good'); };
+    $('loadJsonBtn').onclick=function(){ try{ data=clean(parseDataText($('jsonBox').value)); render(); status('Loaded data from box.','good'); }catch(e){ status('Invalid site.js / JSON. Nothing changed.','bad'); } };
+    $('resetBtn').onclick=function(){ data=clean(fileData || DEFAULT_DATA); render(); status('Reset from data/site.js.','good'); };
     boot();
   </script>
 </body>
