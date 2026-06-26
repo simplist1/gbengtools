@@ -1,18 +1,24 @@
-const COOKIE_OPTIONS = 'Path=/; Secure; SameSite=Lax';
+const COOKIE_BASE = 'Path=/; Secure; SameSite=Lax';
 
 function encodeCookie(value) {
-  return encodeURIComponent(value).replace(/%(2[346B]|5E|60|7C)/g, decodeURIComponent);
+  return encodeURIComponent(value);
 }
 
-function setCookie(name, value, options = {}) {
-  const parts = [`${name}=${encodeCookie(value)}`, COOKIE_OPTIONS];
+function makeCookie(name, value, options = {}) {
+  const parts = [`${name}=${encodeCookie(value)}`, COOKIE_BASE];
   if (options.httpOnly) parts.push('HttpOnly');
   if (options.maxAge != null) parts.push(`Max-Age=${options.maxAge}`);
   return parts.join('; ');
 }
 
 function clearCookie(name, httpOnly = true) {
-  return setCookie(name, '', { httpOnly, maxAge: 0 });
+  return makeCookie(name, '', { httpOnly, maxAge: 0 });
+}
+
+function redirect(location, cookies = []) {
+  const headers = new Headers({ Location: location });
+  cookies.forEach(value => headers.append('Set-Cookie', value));
+  return new Response(null, { status: 302, headers });
 }
 
 function parseCookies(header = '') {
@@ -27,6 +33,13 @@ function json(data, status = 200) {
   return new Response(JSON.stringify(data, null, 2), {
     status,
     headers: { 'Content-Type': 'application/json; charset=utf-8' }
+  });
+}
+
+function text(message, status = 200) {
+  return new Response(message, {
+    status,
+    headers: { 'Content-Type': 'text/plain; charset=utf-8' }
   });
 }
 
@@ -46,8 +59,8 @@ async function sha256Base64Url(value) {
   return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
 }
 
-function toBase64(text) {
-  const bytes = new TextEncoder().encode(text);
+function toBase64(textValue) {
+  const bytes = new TextEncoder().encode(textValue);
   let binary = '';
   bytes.forEach(byte => binary += String.fromCharCode(byte));
   return btoa(binary);
@@ -70,10 +83,28 @@ async function githubJson(url, token, options = {}) {
   return body;
 }
 
-async function login(request, env) {
-  if (!env.GITHUB_CLIENT_ID) return new Response('Missing GITHUB_CLIENT_ID.', { status: 500 });
+function getOrigin(request) {
+  return new URL(request.url).origin;
+}
 
-  const origin = new URL(request.url).origin;
+function health(env) {
+  return json({
+    ok: true,
+    worker: 'gbengtools',
+    hasAssets: !!env.ASSETS,
+    hasClientId: !!env.GITHUB_CLIENT_ID,
+    hasClientSecret: !!env.GITHUB_CLIENT_SECRET,
+    allowedLogin: env.GITHUB_ALLOWED_LOGIN || 'simplist1',
+    repository: env.GITHUB_REPOSITORY || 'simplist1/gbengtools',
+    branch: env.GITHUB_BRANCH || 'main',
+    siteDataPath: env.GITHUB_SITE_DATA_PATH || 'docs/data/site.js'
+  });
+}
+
+async function login(request, env) {
+  if (!env.GITHUB_CLIENT_ID) return text('Missing GITHUB_CLIENT_ID environment variable.', 500);
+
+  const origin = getOrigin(request);
   const redirectUri = `${origin}/api/github/callback`;
   const state = randomBase64Url(32);
   const verifier = randomBase64Url(64);
@@ -89,15 +120,15 @@ async function login(request, env) {
   url.searchParams.set('code_challenge_method', 'S256');
   url.searchParams.set('prompt', 'select_account');
 
-  const response = Response.redirect(url.toString(), 302);
-  response.headers.append('Set-Cookie', setCookie('gbgh_state', state, { httpOnly: true, maxAge: 600 }));
-  response.headers.append('Set-Cookie', setCookie('gbgh_verifier', verifier, { httpOnly: true, maxAge: 600 }));
-  return response;
+  return redirect(url.toString(), [
+    makeCookie('gbgh_state', state, { httpOnly: true, maxAge: 600 }),
+    makeCookie('gbgh_verifier', verifier, { httpOnly: true, maxAge: 600 })
+  ]);
 }
 
 async function callback(request, env) {
   if (!env.GITHUB_CLIENT_ID || !env.GITHUB_CLIENT_SECRET) {
-    return new Response('Missing GITHUB_CLIENT_ID or GITHUB_CLIENT_SECRET.', { status: 500 });
+    return text('Missing GITHUB_CLIENT_ID or GITHUB_CLIENT_SECRET environment variable.', 500);
   }
 
   const requestUrl = new URL(request.url);
@@ -110,7 +141,7 @@ async function callback(request, env) {
   const redirectUri = `${origin}/api/github/callback`;
 
   if (!code || !state || !expectedState || state !== expectedState || !verifier) {
-    return Response.redirect(`${origin}/editor.html?code=gbadmin&github=state_error`, 302);
+    return redirect(`${origin}/editor.html?code=gbadmin&github=state_error`);
   }
 
   const tokenResponse = await fetch('https://github.com/login/oauth/access_token', {
@@ -131,26 +162,26 @@ async function callback(request, env) {
 
   const tokenBody = await tokenResponse.json().catch(() => ({}));
   if (!tokenResponse.ok || tokenBody.error || !tokenBody.access_token) {
-    return Response.redirect(`${origin}/editor.html?code=gbadmin&github=token_error`, 302);
+    return redirect(`${origin}/editor.html?code=gbadmin&github=token_error`);
   }
 
   const user = await githubJson('https://api.github.com/user', tokenBody.access_token);
   const allowedLogin = env.GITHUB_ALLOWED_LOGIN || 'simplist1';
   if (allowedLogin && user.login !== allowedLogin) {
-    const response = Response.redirect(`${origin}/editor.html?code=gbadmin&github=wrong_user`, 302);
-    response.headers.append('Set-Cookie', clearCookie('gbgh_state'));
-    response.headers.append('Set-Cookie', clearCookie('gbgh_verifier'));
-    response.headers.append('Set-Cookie', clearCookie('gbgh_token'));
-    response.headers.append('Set-Cookie', clearCookie('gbgh_user', false));
-    return response;
+    return redirect(`${origin}/editor.html?code=gbadmin&github=wrong_user`, [
+      clearCookie('gbgh_state'),
+      clearCookie('gbgh_verifier'),
+      clearCookie('gbgh_token'),
+      clearCookie('gbgh_user', false)
+    ]);
   }
 
-  const response = Response.redirect(`${origin}/editor.html?code=gbadmin&github=connected`, 302);
-  response.headers.append('Set-Cookie', clearCookie('gbgh_state'));
-  response.headers.append('Set-Cookie', clearCookie('gbgh_verifier'));
-  response.headers.append('Set-Cookie', setCookie('gbgh_token', tokenBody.access_token, { httpOnly: true, maxAge: 60 * 60 * 8 }));
-  response.headers.append('Set-Cookie', setCookie('gbgh_user', user.login, { httpOnly: false, maxAge: 60 * 60 * 8 }));
-  return response;
+  return redirect(`${origin}/editor.html?code=gbadmin&github=connected`, [
+    clearCookie('gbgh_state'),
+    clearCookie('gbgh_verifier'),
+    makeCookie('gbgh_token', tokenBody.access_token, { httpOnly: true, maxAge: 60 * 60 * 8 }),
+    makeCookie('gbgh_user', user.login, { httpOnly: false, maxAge: 60 * 60 * 8 })
+  ]);
 }
 
 async function me(request, env) {
@@ -174,13 +205,13 @@ async function me(request, env) {
 }
 
 async function logout(request) {
-  const origin = new URL(request.url).origin;
-  const response = Response.redirect(`${origin}/editor.html?code=gbadmin&github=logged_out`, 302);
-  response.headers.append('Set-Cookie', clearCookie('gbgh_state'));
-  response.headers.append('Set-Cookie', clearCookie('gbgh_verifier'));
-  response.headers.append('Set-Cookie', clearCookie('gbgh_token'));
-  response.headers.append('Set-Cookie', clearCookie('gbgh_user', false));
-  return response;
+  const origin = getOrigin(request);
+  return redirect(`${origin}/editor.html?code=gbadmin&github=logged_out`, [
+    clearCookie('gbgh_state'),
+    clearCookie('gbgh_verifier'),
+    clearCookie('gbgh_token'),
+    clearCookie('gbgh_user', false)
+  ]);
 }
 
 async function saveSite(request, env) {
@@ -239,6 +270,7 @@ async function saveSite(request, env) {
 
 async function handleApi(request, env) {
   const url = new URL(request.url);
+  if (url.pathname === '/api/health') return health(env);
   if (url.pathname === '/api/github/login' && request.method === 'GET') return login(request, env);
   if (url.pathname === '/api/github/callback' && request.method === 'GET') return callback(request, env);
   if (url.pathname === '/api/github/me' && request.method === 'GET') return me(request, env);
@@ -250,7 +282,16 @@ async function handleApi(request, env) {
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
-    if (url.pathname.startsWith('/api/')) return handleApi(request, env);
-    return env.ASSETS.fetch(request);
+    try {
+      if (url.pathname.startsWith('/api/')) return await handleApi(request, env);
+      if (!env.ASSETS) return text('Static asset binding ASSETS is missing.', 500);
+      return env.ASSETS.fetch(request);
+    } catch (error) {
+      return json({
+        ok: false,
+        error: error && error.message ? error.message : String(error),
+        stack: error && error.stack ? error.stack : null
+      }, 500);
+    }
   }
 };
