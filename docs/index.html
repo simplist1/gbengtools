@@ -16,69 +16,89 @@
       <a class="brand" href="#">
         <div class="mark" aria-hidden="true"></div>
         <div>
-          <strong id="brandTitle"></strong>
-          <span id="brandSubtitle"></span>
+          <strong id="brandTitle">GB Engineering Tools</strong>
+          <span id="brandSubtitle">CAD / Survey / Civil Utilities</span>
         </div>
       </a>
       <div class="links">
-        <a href="#suites" id="navSuites"></a>
-        <a href="#tools" id="navTools"></a>
-        <a href="#standalone" id="navStandalone"></a>
-        <a href="editor.html?code=gbadmin" id="navAdmin"></a>
-        <a href="#" id="navGithub" target="_blank" rel="noopener"></a>
+        <a href="#suites" id="navSuites">Suites</a>
+        <a href="#tools" id="navTools">Tools</a>
+        <a href="#standalone" id="navStandalone">Standalone</a>
+        <a href="editor.html?code=gbadmin" id="navAdmin">Admin</a>
+        <a href="https://github.com/simplist1/gbengtools" id="navGithub" target="_blank" rel="noopener">GitHub</a>
       </div>
     </nav>
   </header>
 
   <main class="site">
     <section class="hero">
-      <div class="kicker" id="heroKicker"></div>
-      <h1 id="heroTitle"></h1>
-      <p class="lead" id="heroBody"></p>
+      <div class="kicker" id="heroKicker">Production CAD Utility Portal</div>
+      <h1 id="heroTitle">Surveying and Civil 3D tools without the bloat.</h1>
+      <p class="lead" id="heroBody">Suite installers for legacy AutoCAD / Land Desktop workflows and modern Civil 3D setups. Built around field-to-CAD production, point import, DXF output, adjustment tools, and deployment packages.</p>
       <div class="actions">
-        <a class="btn primary" href="#suites" id="heroPrimary"></a>
-        <a class="btn" href="#standalone" id="heroSecondary"></a>
-        <a class="btn" href="#tools" id="heroThird"></a>
+        <a class="btn primary" href="#suites" id="heroPrimary">Download Suites</a>
+        <a class="btn" href="#standalone" id="heroSecondary">Standalone Installers</a>
+        <a class="btn" href="#tools" id="heroThird">Included Tools</a>
       </div>
     </section>
 
     <section id="suites">
       <div class="section-head">
-        <h2 id="suitesTitle"></h2>
-        <p id="suitesCaption"></p>
+        <h2 id="suitesTitle">Suite installers</h2>
+        <p id="suitesCaption">centralized deployment packages</p>
       </div>
-      <div class="grid" id="suiteGrid"></div>
+      <div class="grid" id="suiteGrid">
+        <article class="card">
+          <h3>GB Tools Suite 2000</h3>
+          <div class="sub">AutoCAD / Land Desktop 2000</div>
+          <p>Installer package for old-school production machines that need reliable LISP/VBA utilities and DXF-based workflows.</p>
+          <div class="details"><span class="tag">AutoCAD 2000</span><span class="tag">Land Desktop</span><span class="tag">VBA</span><span class="tag">LISP</span></div>
+          <div class="actions"><a class="btn primary" href="#">Download Suite</a><a class="btn" href="#">Release Notes</a></div>
+        </article>
+        <article class="card">
+          <h3>GB Tools Suite 2027</h3>
+          <div class="sub">Civil 3D / AutoCAD 2027</div>
+          <p>Installer package for modern Civil 3D workflows using .NET tools, LISP helpers, and bundle-style deployment.</p>
+          <div class="details"><span class="tag">Civil 3D 2027</span><span class="tag">AutoCAD 2027</span><span class="tag">.NET</span><span class="tag">LISP</span></div>
+          <div class="actions"><a class="btn primary" href="#">Download Suite</a><a class="btn" href="#">Release Notes</a></div>
+        </article>
+      </div>
     </section>
 
     <section id="tools">
       <div class="section-head">
-        <h2 id="toolsTitle"></h2>
-        <p id="toolsCaption"></p>
+        <h2 id="toolsTitle">Included tools</h2>
+        <p id="toolsCaption">apps, scripts, and workflow helpers</p>
       </div>
       <div class="split">
         <div class="card" id="standalone">
-          <h3 id="standaloneTitle"></h3>
-          <p id="standaloneDescription"></p>
-          <a class="btn" href="#" id="standaloneButton"></a>
+          <h3 id="standaloneTitle">Standalone downloads</h3>
+          <p id="standaloneDescription">Individual installers and scripts stay on the standalone catalog for now. This site becomes the clean front page for suite installers and major releases.</p>
+          <a class="btn" href="https://simplist1.github.io/any2dxf_releases/" id="standaloneButton">Open Standalone Catalog</a>
         </div>
         <div class="card">
-          <h3 id="toolCatalogTitle"></h3>
-          <div class="tool-list" id="toolList"></div>
+          <h3 id="toolCatalogTitle">Tool catalog</h3>
+          <div class="tool-list" id="toolList">
+            <div class="tool-row"><strong>Any2DXF</strong><span>Point import and DXF export for legacy and modern CAD workflows.</span></div>
+            <div class="tool-row"><strong>LS Adjust</strong><span>Move and rotate selected CAD objects to match control points.</span></div>
+            <div class="tool-row"><strong>C3D Tools</strong><span>Civil 3D 2027 utilities, bundle loading, and command helpers.</span></div>
+            <div class="tool-row"><strong>LISP Pack</strong><span>Startup scripts, menu targets, toolbar commands, and CAD helpers.</span></div>
+          </div>
         </div>
       </div>
     </section>
 
     <section id="admin">
       <div class="section-head">
-        <h2 id="adminTitle"></h2>
-        <p id="adminCaption"></p>
+        <h2 id="adminTitle">Admin editor</h2>
+        <p id="adminCaption">browser save plus JSON export</p>
       </div>
-      <div class="note" id="adminNote"></div>
+      <div class="note" id="adminNote">Use the URL-code editor to change site text, suite panels, tool rows, and GitHub Release links. Save browser preview for quick testing, then download or copy data/site.json when you want to commit the public version.</div>
     </section>
 
     <footer>
-      <span id="footerLeft"></span>
-      <span id="footerRight"></span>
+      <span id="footerLeft">GB Engineering Tools</span>
+      <span id="footerRight">apps.geodeta.us</span>
     </footer>
   </main>
 
