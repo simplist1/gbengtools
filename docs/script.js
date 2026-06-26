@@ -116,14 +116,21 @@ function getBrowserPreview() {
   }
 }
 
-fetch("data/site.json?cache=" + Date.now())
-  .then(res => {
-    if (!res.ok) throw new Error("Could not load data/site.json");
-    return res.json();
-  })
-  .then(fileData => {
-    render(getBrowserPreview() || fileData);
-  })
-  .catch(error => {
-    console.error(error);
-  });
+function boot() {
+  const scriptData = window.GB_SITE_DATA;
+  const previewData = getBrowserPreview();
+
+  if (looksUsable(previewData)) {
+    render(previewData);
+    return;
+  }
+
+  if (looksUsable(scriptData)) {
+    render(scriptData);
+    return;
+  }
+
+  console.warn("No usable data found. Leaving static fallback HTML visible.");
+}
+
+boot();
