@@ -1,4 +1,370 @@
-<!doctype html>
-<title>GB Tools</title>
-<h1>GB Tools</h1>
-<p>Placeholder.</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GB Engineering Tools Editor</title>
+  <style>
+    :root{--bg:#111312;--panel:#181b19;--panel2:#202520;--text:#f1f0e8;--muted:#a5a79f;--line:#343934;--accent:#e69b22;--bad:#d35b4d;--good:#68b878;--mono:Consolas,monospace;--sans:Arial,Helvetica,sans-serif}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans)}a{color:inherit}.wrap{width:min(1180px,calc(100% - 28px));margin:0 auto;padding:24px 0 48px}.top{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:20px}.eyebrow{color:var(--accent);font-family:var(--mono);font-size:12px;text-transform:uppercase;letter-spacing:.08em}.top h1{margin:6px 0 8px;font-size:34px;letter-spacing:-.04em}.top p{margin:0;color:var(--muted);line-height:1.45}.toolbar{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.btn{min-height:38px;border:1px solid var(--line);background:var(--panel2);color:var(--text);font-weight:700;padding:0 12px;cursor:pointer}.btn:hover{border-color:var(--accent)}.btn.primary{background:var(--accent);border-color:#efbb64;color:#171207}.btn.bad{border-color:#70403b;color:#ffb3aa}.layout{display:grid;grid-template-columns:1fr 360px;gap:18px}.panel{background:var(--panel);border:1px solid var(--line);padding:18px}.panel h2{margin:0 0 14px;font-size:22px}.group{border-top:1px solid var(--line);padding-top:16px;margin-top:16px}.group:first-child{border-top:0;margin-top:0;padding-top:0}.group h3{margin:0 0 10px;font-size:17px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.field{display:flex;flex-direction:column;gap:6px}.field.full{grid-column:1/-1}label{font-family:var(--mono);font-size:12px;color:var(--muted)}input,textarea{width:100%;border:1px solid var(--line);background:#0e100f;color:var(--text);padding:10px;font:14px var(--sans);outline:none}textarea{min-height:86px;resize:vertical;line-height:1.45}input:focus,textarea:focus{border-color:var(--accent)}.card-edit{border:1px solid var(--line);background:#141715;padding:14px;margin-bottom:12px}.card-head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:12px}.card-head strong{font-family:var(--mono);font-size:13px;color:#d7d0bf}.scroll-box{max-height:430px;overflow:auto;border:1px solid var(--line);padding:12px;background:#101210}.tool-row-edit{display:grid;grid-template-columns:1fr 2fr auto;gap:10px;align-items:end;border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:12px}.tool-row-edit:last-child{border-bottom:0;margin-bottom:0;padding-bottom:0}.side{position:sticky;top:18px;align-self:start}.status{font-family:var(--mono);font-size:12px;color:var(--muted);margin:0 0 12px}.status.good{color:var(--good)}.status.bad{color:var(--bad)}#jsonBox{height:520px;min-height:320px;font-family:var(--mono);font-size:12px}.locked{min-height:100vh;display:grid;place-items:center;padding:28px}.locked .panel{width:min(460px,100%)}.hide{display:none!important}.mini{font-size:12px;color:var(--muted);line-height:1.45;margin-top:8px}.empty{color:var(--muted);border:1px dashed var(--line);padding:14px;text-align:center}.footer-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}@media(max-width:900px){.top,.layout{grid-template-columns:1fr;display:block}.toolbar{justify-content:flex-start;margin-top:14px}.side{position:static;margin-top:18px}.grid,.tool-row-edit{grid-template-columns:1fr}.field.full{grid-column:auto}}
+  </style>
+</head>
+<body>
+  <div id="locked" class="locked hide">
+    <div class="panel">
+      <div class="eyebrow">GB Engineering Tools</div>
+      <h1>Editor locked</h1>
+      <p class="mini">Open this page with a URL code, like <b>editor.html?code=gbadmin</b>, or enter the code below.</p>
+      <div class="field" style="margin-top:14px">
+        <label for="codeInput">URL code</label>
+        <input id="codeInput" type="password" autocomplete="off">
+      </div>
+      <div class="footer-actions">
+        <button class="btn primary" id="unlockBtn">Unlock</button>
+        <a class="btn" href="index.html">Back to site</a>
+      </div>
+    </div>
+  </div>
+
+  <main id="app" class="wrap hide">
+    <div class="top">
+      <div>
+        <div class="eyebrow">URL-code admin editor</div>
+        <h1>GB Engineering Tools Editor</h1>
+        <p>Every public text field is editable here. Save to browser for preview, then export/download <b>site.json</b> when you want to commit it.</p>
+      </div>
+      <div class="toolbar">
+        <button class="btn primary" id="saveBrowserBtn">Save Browser Preview</button>
+        <button class="btn" id="openPreviewBtn">Open Preview</button>
+        <button class="btn" id="downloadBtn">Download site.json</button>
+        <button class="btn" id="copyBtn">Copy JSON</button>
+        <button class="btn" id="importBtn">Import JSON</button>
+        <button class="btn bad" id="clearBtn">Clear Browser Save</button>
+      </div>
+    </div>
+
+    <div class="layout">
+      <section class="panel" id="form"></section>
+      <aside class="panel side">
+        <h2>Export JSON</h2>
+        <p id="status" class="status">Loading data/site.json...</p>
+        <textarea id="jsonBox" spellcheck="false"></textarea>
+        <div class="footer-actions">
+          <button class="btn" id="loadJsonBtn">Load From Box</button>
+          <button class="btn" id="resetBtn">Reset From File</button>
+        </div>
+        <p class="mini">For GitHub Releases, paste the release page or asset URL into the download / notes URL boxes. This keeps it compatible across GitHub Pages, your app site, and any mirror.</p>
+      </aside>
+    </div>
+  </main>
+
+  <input id="fileInput" class="hide" type="file" accept="application/json,.json">
+
+  <script>
+    const STORAGE_KEY = "gbengtools.siteData";
+    const VALID_CODES = ["gbadmin", "pop123"];
+    let data = null;
+    let fileData = null;
+
+    const $ = id => document.getElementById(id);
+    const esc = value => String(value ?? "").replace(/[&<>"']/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[char]));
+
+    const blankData = () => ({
+      site:{title:"",subtitle:"",githubUrl:"",standaloneUrl:"",footerLeft:"",footerRight:""},
+      nav:{suites:"",tools:"",standalone:"",admin:"",github:""},
+      hero:{kicker:"",title:"",body:"",primaryButton:"",secondaryButton:"",thirdButton:""},
+      suitesSection:{title:"",caption:""},
+      suites:[],
+      toolsSection:{title:"",caption:""},
+      standalonePanel:{title:"",description:"",buttonText:"",buttonUrl:""},
+      toolCatalog:{title:"",rows:[]},
+      adminSection:{title:"",caption:"",note:""}
+    });
+
+    function normalize(input) {
+      const base = blankData();
+      const source = input && typeof input === "object" ? input : {};
+      for (const key of Object.keys(base)) {
+        if (Array.isArray(base[key])) base[key] = Array.isArray(source[key]) ? source[key] : [];
+        else base[key] = {...base[key], ...(source[key] || {})};
+      }
+      base.suites = Array.isArray(source.suites) ? source.suites.map(s => ({
+        name:"", subtitle:"", description:"", tags:[], downloadText:"", downloadUrl:"", notesText:"", notesUrl:"", ...(s || {}),
+        tags: Array.isArray(s?.tags) ? s.tags : []
+      })) : [];
+      base.toolCatalog.rows = Array.isArray(source.toolCatalog?.rows) ? source.toolCatalog.rows.map(r => ({name:"", description:"", ...(r || {})})) : [];
+      return base;
+    }
+
+    function getPath(path) {
+      return path.split(".").reduce((obj, part) => obj?.[part], data);
+    }
+
+    function setPath(path, value) {
+      const parts = path.split(".");
+      let obj = data;
+      while (parts.length > 1) {
+        const part = parts.shift();
+        if (obj[part] == null) obj[part] = /^\d+$/.test(parts[0]) ? [] : {};
+        obj = obj[part];
+      }
+      obj[parts[0]] = value;
+    }
+
+    function field(path, label, multiline = false, full = false) {
+      const value = getPath(path) ?? "";
+      const tag = multiline ? "textarea" : "input";
+      const valueAttr = multiline ? `>${esc(value)}</textarea>` : ` value="${esc(value)}">`;
+      return `<div class="field ${full ? "full" : ""}"><label>${esc(label)}</label><${tag} data-path="${esc(path)}"${multiline ? "" : " type=\"text\""}${valueAttr}</div>`;
+    }
+
+    function suiteCard(suite, index) {
+      return `<div class="card-edit">
+        <div class="card-head"><strong>Suite panel ${index + 1}</strong><button class="btn bad" data-action="remove-suite" data-index="${index}">Remove Panel</button></div>
+        <div class="grid">
+          ${field(`suites.${index}.name`, "panel title / suite name")}
+          ${field(`suites.${index}.subtitle`, "subtitle")}
+          ${field(`suites.${index}.description`, "description", true, true)}
+          <div class="field full"><label>tags / badges, comma separated</label><input type="text" data-path="suites.${index}.tags" data-kind="tags" value="${esc((suite.tags || []).join(", "))}"></div>
+          ${field(`suites.${index}.downloadText`, "download button text")}
+          ${field(`suites.${index}.downloadUrl`, "download URL / GitHub Release asset URL")}
+          ${field(`suites.${index}.notesText`, "notes button text")}
+          ${field(`suites.${index}.notesUrl`, "notes URL / GitHub Release page URL")}
+        </div>
+      </div>`;
+    }
+
+    function toolRow(row, index) {
+      return `<div class="tool-row-edit">
+        ${field(`toolCatalog.rows.${index}.name`, "tool name")}
+        ${field(`toolCatalog.rows.${index}.description`, "tool description")}
+        <button class="btn bad" data-action="remove-tool" data-index="${index}">Remove Row</button>
+      </div>`;
+    }
+
+    function renderForm() {
+      $("form").innerHTML = `
+        <div class="group">
+          <h2>Site text</h2>
+          <div class="grid">
+            ${field("site.title", "browser title / brand title")}
+            ${field("site.subtitle", "brand subtitle")}
+            ${field("site.githubUrl", "GitHub URL")}
+            ${field("site.standaloneUrl", "standalone catalog URL")}
+            ${field("site.footerLeft", "footer left")}
+            ${field("site.footerRight", "footer right")}
+          </div>
+        </div>
+        <div class="group">
+          <h3>Navigation labels</h3>
+          <div class="grid">
+            ${field("nav.suites", "suites link")}
+            ${field("nav.tools", "tools link")}
+            ${field("nav.standalone", "standalone link")}
+            ${field("nav.admin", "admin link")}
+            ${field("nav.github", "GitHub link")}
+          </div>
+        </div>
+        <div class="group">
+          <h3>Hero</h3>
+          <div class="grid">
+            ${field("hero.kicker", "small kicker")}
+            ${field("hero.title", "main headline", true, true)}
+            ${field("hero.body", "lead paragraph", true, true)}
+            ${field("hero.primaryButton", "primary button text")}
+            ${field("hero.secondaryButton", "secondary button text")}
+            ${field("hero.thirdButton", "third button text")}
+          </div>
+        </div>
+        <div class="group">
+          <h2>Suite installers</h2>
+          <div class="grid">
+            ${field("suitesSection.title", "section title")}
+            ${field("suitesSection.caption", "section caption")}
+          </div>
+          <div style="height:12px"></div>
+          <div id="suiteList">${data.suites.length ? data.suites.map(suiteCard).join("") : '<div class="empty">No suite panels yet.</div>'}</div>
+          <button class="btn primary" data-action="add-suite">Add Suite Panel</button>
+        </div>
+        <div class="group">
+          <h2>Included tools</h2>
+          <div class="grid">
+            ${field("toolsSection.title", "tools section title")}
+            ${field("toolsSection.caption", "tools section caption")}
+            ${field("standalonePanel.title", "standalone panel title")}
+            ${field("standalonePanel.buttonText", "standalone button text")}
+            ${field("standalonePanel.description", "standalone panel description", true, true)}
+            ${field("standalonePanel.buttonUrl", "standalone button URL")}
+            ${field("toolCatalog.title", "tool catalog title")}
+          </div>
+          <h3 style="margin-top:18px">Tool rows</h3>
+          <div class="scroll-box">${data.toolCatalog.rows.length ? data.toolCatalog.rows.map(toolRow).join("") : '<div class="empty">No tool rows yet.</div>'}</div>
+          <div class="footer-actions"><button class="btn primary" data-action="add-tool">Add Tool Row</button></div>
+        </div>
+        <div class="group">
+          <h2>Admin section</h2>
+          <div class="grid">
+            ${field("adminSection.title", "admin title")}
+            ${field("adminSection.caption", "admin caption")}
+            ${field("adminSection.note", "admin note", true, true)}
+          </div>
+        </div>`;
+      updateJsonBox();
+    }
+
+    function updateJsonBox() {
+      $("jsonBox").value = JSON.stringify(data, null, 2);
+    }
+
+    function setStatus(text, kind = "") {
+      const node = $("status");
+      node.textContent = text;
+      node.className = "status " + kind;
+    }
+
+    function saveBrowser() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data, null, 2));
+      setStatus("Saved in this browser. Open Preview will use this data.", "good");
+    }
+
+    function loadBrowser() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        return saved ? JSON.parse(saved) : null;
+      } catch (error) {
+        setStatus("Browser save was broken, so it was ignored.", "bad");
+        return null;
+      }
+    }
+
+    async function loadFileData() {
+      const res = await fetch("data/site.json?cache=" + Date.now());
+      if (!res.ok) throw new Error("Could not load data/site.json");
+      return await res.json();
+    }
+
+    async function bootEditor() {
+      try {
+        fileData = normalize(await loadFileData());
+        data = normalize(loadBrowser() || fileData);
+        renderForm();
+        setStatus(localStorage.getItem(STORAGE_KEY) ? "Loaded browser-saved preview data." : "Loaded data/site.json.", "good");
+      } catch (error) {
+        data = blankData();
+        renderForm();
+        setStatus("Could not load data/site.json, started blank.", "bad");
+      }
+    }
+
+    function downloadJson() {
+      const blob = new Blob([JSON.stringify(data, null, 2)], {type:"application/json"});
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "site.json";
+      a.click();
+      URL.revokeObjectURL(a.href);
+      setStatus("Downloaded site.json.", "good");
+    }
+
+    function loadFromText(text) {
+      try {
+        data = normalize(JSON.parse(text));
+        renderForm();
+        setStatus("Loaded JSON into editor.", "good");
+      } catch (error) {
+        setStatus("That JSON is not valid. Nothing changed.", "bad");
+      }
+    }
+
+    document.addEventListener("input", event => {
+      const target = event.target;
+      if (!target.matches("[data-path]")) return;
+      const value = target.dataset.kind === "tags"
+        ? target.value.split(",").map(x => x.trim()).filter(Boolean)
+        : target.value;
+      setPath(target.dataset.path, value);
+      updateJsonBox();
+      setStatus("Edited. Save browser preview or export JSON when ready.");
+    });
+
+    document.addEventListener("click", async event => {
+      const btn = event.target.closest("[data-action]");
+      if (!btn) return;
+      const action = btn.dataset.action;
+      const index = Number(btn.dataset.index);
+      if (action === "add-suite") {
+        data.suites.push({name:"New Suite",subtitle:"",description:"",tags:[],downloadText:"Download Suite",downloadUrl:"#",notesText:"Release Notes",notesUrl:"#"});
+        renderForm();
+        setStatus("Added suite panel.", "good");
+      }
+      if (action === "remove-suite") {
+        data.suites.splice(index, 1);
+        renderForm();
+        setStatus("Removed suite panel.", "good");
+      }
+      if (action === "add-tool") {
+        data.toolCatalog.rows.push({name:"New Tool",description:""});
+        renderForm();
+        setStatus("Added tool row.", "good");
+      }
+      if (action === "remove-tool") {
+        data.toolCatalog.rows.splice(index, 1);
+        renderForm();
+        setStatus("Removed tool row.", "good");
+      }
+    });
+
+    $("saveBrowserBtn").addEventListener("click", saveBrowser);
+    $("openPreviewBtn").addEventListener("click", () => window.open("index.html", "_blank"));
+    $("downloadBtn").addEventListener("click", downloadJson);
+    $("copyBtn").addEventListener("click", async () => {
+      await navigator.clipboard.writeText(JSON.stringify(data, null, 2));
+      setStatus("Copied JSON to clipboard.", "good");
+    });
+    $("importBtn").addEventListener("click", () => $("fileInput").click());
+    $("fileInput").addEventListener("change", event => {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => loadFromText(reader.result);
+      reader.readAsText(file);
+      event.target.value = "";
+    });
+    $("clearBtn").addEventListener("click", () => {
+      localStorage.removeItem(STORAGE_KEY);
+      setStatus("Browser preview save cleared. Reset from file to reload committed data.", "good");
+    });
+    $("loadJsonBtn").addEventListener("click", () => loadFromText($("jsonBox").value));
+    $("resetBtn").addEventListener("click", async () => {
+      try {
+        fileData = normalize(await loadFileData());
+        data = normalize(fileData);
+        renderForm();
+        setStatus("Reset editor to committed data/site.json.", "good");
+      } catch (error) {
+        setStatus("Could not reload data/site.json.", "bad");
+      }
+    });
+
+    function checkCode() {
+      const params = new URLSearchParams(location.search);
+      const code = params.get("code") || "";
+      if (VALID_CODES.includes(code)) {
+        $("locked").classList.add("hide");
+        $("app").classList.remove("hide");
+        bootEditor();
+      } else {
+        $("app").classList.add("hide");
+        $("locked").classList.remove("hide");
+      }
+    }
+
+    $("unlockBtn").addEventListener("click", () => {
+      const code = $("codeInput").value.trim();
+      if (!VALID_CODES.includes(code)) return;
+      location.href = "editor.html?code=" + encodeURIComponent(code);
+    });
+
+    checkCode();
+  </script>
+</body>
+</html>
