@@ -6,12 +6,8 @@ function parseCookies(header = '') {
   }).filter(Boolean));
 }
 
-function encodeCookie(value) {
-  return encodeURIComponent(value).replace(/%(2[346B]|5E|60|7C)/g, decodeURIComponent);
-}
-
 function cookie(name, value, options = {}) {
-  const parts = [`${name}=${encodeCookie(value)}`];
+  const parts = [`${name}=${encodeURIComponent(value)}`];
   if (options.maxAge != null) parts.push(`Max-Age=${options.maxAge}`);
   if (options.path) parts.push(`Path=${options.path}`);
   if (options.httpOnly) parts.push('HttpOnly');
@@ -20,8 +16,21 @@ function cookie(name, value, options = {}) {
   return parts.join('; ');
 }
 
-function clearCookie(name) {
-  return cookie(name, '', { path: '/', httpOnly: true, secure: true, sameSite: 'Lax', maxAge: 0 });
+function clearCookie(name, httpOnly = true) {
+  return cookie(name, '', { path: '/', httpOnly, secure: true, sameSite: 'Lax', maxAge: 0 });
+}
+
+function redirect(location, cookies = []) {
+  const headers = new Headers({ Location: location });
+  cookies.forEach(value => headers.append('Set-Cookie', value));
+  return new Response(null, { status: 302, headers });
+}
+
+function text(message, status = 200) {
+  return new Response(message, {
+    status,
+    headers: { 'Content-Type': 'text/plain; charset=utf-8' }
+  });
 }
 
 async function githubJson(url, token) {
@@ -38,58 +47,63 @@ async function githubJson(url, token) {
 }
 
 export async function onRequestGet({ request, env }) {
-  if (!env.GITHUB_CLIENT_ID || !env.GITHUB_CLIENT_SECRET) {
-    return new Response('Missing GITHUB_CLIENT_ID or GITHUB_CLIENT_SECRET environment variable.', { status: 500 });
+  try {
+    if (!env.GITHUB_CLIENT_ID || !env.GITHUB_CLIENT_SECRET) {
+      return text('Missing GITHUB_CLIENT_ID or GITHUB_CLIENT_SECRET environment variable.', 500);
+    }
+
+    const requestUrl = new URL(request.url);
+    const code = requestUrl.searchParams.get('code');
+    const state = requestUrl.searchParams.get('state');
+    const cookies = parseCookies(request.headers.get('Cookie') || '');
+    const expectedState = cookies.gbgh_state;
+    const verifier = cookies.gbgh_verifier;
+    const origin = requestUrl.origin;
+    const redirectUri = `${origin}/api/github/callback`;
+
+    if (!code || !state || !expectedState || state !== expectedState || !verifier) {
+      return redirect(`${origin}/editor.html?code=gbadmin&github=state_error`);
+    }
+
+    const tokenResponse = await fetch('https://github.com/login/oauth/access_token', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        'User-Agent': 'gbengtools-site-editor'
+      },
+      body: JSON.stringify({
+        client_id: env.GITHUB_CLIENT_ID,
+        client_secret: env.GITHUB_CLIENT_SECRET,
+        code,
+        redirect_uri: redirectUri,
+        code_verifier: verifier
+      })
+    });
+
+    const tokenBody = await tokenResponse.json().catch(() => ({}));
+    if (!tokenResponse.ok || tokenBody.error || !tokenBody.access_token) {
+      return redirect(`${origin}/editor.html?code=gbadmin&github=token_error`);
+    }
+
+    const user = await githubJson('https://api.github.com/user', tokenBody.access_token);
+    const allowedLogin = env.GITHUB_ALLOWED_LOGIN || 'simplist1';
+    if (allowedLogin && user.login !== allowedLogin) {
+      return redirect(`${origin}/editor.html?code=gbadmin&github=wrong_user`, [
+        clearCookie('gbgh_state'),
+        clearCookie('gbgh_verifier'),
+        clearCookie('gbgh_token'),
+        clearCookie('gbgh_user', false)
+      ]);
+    }
+
+    return redirect(`${origin}/editor.html?code=gbadmin&github=connected`, [
+      clearCookie('gbgh_state'),
+      clearCookie('gbgh_verifier'),
+      cookie('gbgh_token', tokenBody.access_token, { path: '/', httpOnly: true, secure: true, sameSite: 'Lax', maxAge: 60 * 60 * 8 }),
+      cookie('gbgh_user', user.login, { path: '/', secure: true, sameSite: 'Lax', maxAge: 60 * 60 * 8 })
+    ]);
+  } catch (error) {
+    return text(error && error.stack ? error.stack : String(error), 500);
   }
-
-  const requestUrl = new URL(request.url);
-  const code = requestUrl.searchParams.get('code');
-  const state = requestUrl.searchParams.get('state');
-  const cookies = parseCookies(request.headers.get('Cookie') || '');
-  const expectedState = cookies.gbgh_state;
-  const verifier = cookies.gbgh_verifier;
-  const origin = requestUrl.origin;
-  const redirectUri = `${origin}/api/github/callback`;
-
-  if (!code || !state || !expectedState || state !== expectedState || !verifier) {
-    return Response.redirect(`${origin}/editor.html?code=gbadmin&github=state_error`, 302);
-  }
-
-  const tokenResponse = await fetch('https://github.com/login/oauth/access_token', {
-    method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      'User-Agent': 'gbengtools-site-editor'
-    },
-    body: JSON.stringify({
-      client_id: env.GITHUB_CLIENT_ID,
-      client_secret: env.GITHUB_CLIENT_SECRET,
-      code,
-      redirect_uri: redirectUri,
-      code_verifier: verifier
-    })
-  });
-
-  const tokenBody = await tokenResponse.json().catch(() => ({}));
-  if (!tokenResponse.ok || tokenBody.error || !tokenBody.access_token) {
-    return Response.redirect(`${origin}/editor.html?code=gbadmin&github=token_error`, 302);
-  }
-
-  const user = await githubJson('https://api.github.com/user', tokenBody.access_token);
-  const allowedLogin = env.GITHUB_ALLOWED_LOGIN || 'simplist1';
-  if (allowedLogin && user.login !== allowedLogin) {
-    const response = Response.redirect(`${origin}/editor.html?code=gbadmin&github=wrong_user`, 302);
-    response.headers.append('Set-Cookie', clearCookie('gbgh_state'));
-    response.headers.append('Set-Cookie', clearCookie('gbgh_verifier'));
-    response.headers.append('Set-Cookie', clearCookie('gbgh_token'));
-    return response;
-  }
-
-  const response = Response.redirect(`${origin}/editor.html?code=gbadmin&github=connected`, 302);
-  response.headers.append('Set-Cookie', clearCookie('gbgh_state'));
-  response.headers.append('Set-Cookie', clearCookie('gbgh_verifier'));
-  response.headers.append('Set-Cookie', cookie('gbgh_token', tokenBody.access_token, { path: '/', httpOnly: true, secure: true, sameSite: 'Lax', maxAge: 60 * 60 * 8 }));
-  response.headers.append('Set-Cookie', cookie('gbgh_user', user.login, { path: '/', secure: true, sameSite: 'Lax', maxAge: 60 * 60 * 8 }));
-  return response;
 }
