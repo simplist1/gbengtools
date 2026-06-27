@@ -16,7 +16,7 @@ window.GB_SITE_DATA = {
   },
   "hero": {
     "kicker": "Production CAD Utility Portal",
-    "title": "Surveying and Civil 3D tools without the bloat.Yo",
+    "title": "Surveying and Civil 3D tools without the bloat.",
     "body": "Suite installers for legacy AutoCAD / Land Desktop workflows and modern Civil 3D setups. Built around field-to-CAD production, point import, DXF output, adjustment tools, and deployment packages.",
     "primaryButton": "Download Suites",
     "secondaryButton": "Standalone Installers",
@@ -95,13 +95,3 @@ window.GB_SITE_DATA = {
     "note": "Use the URL-code editor to change site text, suite panels, tool rows, and GitHub Release links. Save browser preview for quick testing, then download or copy data/site.js when you want to commit the public version."
   }
 };
-
-try {
-  const isEditor = /\/editor\.html$/i.test(window.location.pathname);
-  const params = new URLSearchParams(window.location.search);
-  if (isEditor && params.get("draft") !== "1") {
-    localStorage.removeItem("gbengtools.siteData");
-  }
-} catch (error) {
-  console.warn("Could not clear stale editor draft", error);
-}
