@@ -16,7 +16,7 @@ window.GB_SITE_DATA = {
   },
   "hero": {
     "kicker": "Production CAD Utility Portal",
-    "title": "Surveying and Civil 3D tools without the bloat.",
+    "title": "Surveying and Civil 3D tools without the bloat.This is a test.",
     "body": "Suite installers for legacy AutoCAD / Land Desktop workflows and modern Civil 3D setups. Built around field-to-CAD production, point import, DXF output, adjustment tools, and deployment packages.",
     "primaryButton": "Download Suites",
     "secondaryButton": "Standalone Installers",
@@ -31,7 +31,12 @@ window.GB_SITE_DATA = {
       "name": "GB Tools Suite 2000",
       "subtitle": "AutoCAD / Land Desktop 2000",
       "description": "Installer package for old-school production machines that need reliable LISP/VBA utilities and DXF-based workflows.",
-      "tags": ["AutoCAD 2000", "Land Desktop", "VBA", "LISP"],
+      "tags": [
+        "AutoCAD 2000",
+        "Land Desktop",
+        "VBA",
+        "LISP"
+      ],
       "downloadText": "Download Suite",
       "downloadUrl": "#",
       "notesText": "Release Notes",
@@ -41,7 +46,12 @@ window.GB_SITE_DATA = {
       "name": "GB Tools Suite 2027",
       "subtitle": "Civil 3D / AutoCAD 2027",
       "description": "Installer package for modern Civil 3D workflows using .NET tools, LISP helpers, and bundle-style deployment.",
-      "tags": ["Civil 3D 2027", "AutoCAD 2027", ".NET", "LISP"],
+      "tags": [
+        "Civil 3D 2027",
+        "AutoCAD 2027",
+        ".NET",
+        "LISP"
+      ],
       "downloadText": "Download Suite",
       "downloadUrl": "#",
       "notesText": "Release Notes",
@@ -61,10 +71,22 @@ window.GB_SITE_DATA = {
   "toolCatalog": {
     "title": "Tool catalog",
     "rows": [
-      {"name": "Any2DXF", "description": "Point import and DXF export for legacy and modern CAD workflows."},
-      {"name": "LS Adjust", "description": "Move and rotate selected CAD objects to match control points."},
-      {"name": "C3D Tools", "description": "Civil 3D 2027 utilities, bundle loading, and command helpers."},
-      {"name": "LISP Pack", "description": "Startup scripts, menu targets, toolbar commands, and CAD helpers."}
+      {
+        "name": "Any2DXF",
+        "description": "Point import and DXF export for legacy and modern CAD workflows."
+      },
+      {
+        "name": "LS Adjust",
+        "description": "Move and rotate selected CAD objects to match control points."
+      },
+      {
+        "name": "C3D Tools",
+        "description": "Civil 3D 2027 utilities, bundle loading, and command helpers."
+      },
+      {
+        "name": "LISP Pack",
+        "description": "Startup scripts, menu targets, toolbar commands, and CAD helpers."
+      }
     ]
   },
   "adminSection": {
