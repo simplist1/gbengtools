@@ -1,5 +1,3 @@
-const STORAGE_KEY = "gbengtools.siteData";
-
 const esc = (value = "") => String(value).replace(/[&<>"']/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[char]));
 
 function setText(id, value) {
@@ -27,20 +25,11 @@ function cleanData(data = {}) {
 }
 
 function looksUsable(data) {
-  return !!(
-    data &&
-    data.site &&
-    data.site.title &&
-    data.hero &&
-    data.hero.title &&
-    Array.isArray(data.suites) &&
-    data.suites.length
-  );
+  return !!(data && data.site && data.site.title && data.hero && data.hero.title && Array.isArray(data.suites) && data.suites.length);
 }
 
 function render(rawData) {
   const data = cleanData(rawData);
-
   document.title = data.site.title || document.title || "GB Engineering Tools";
 
   setText("brandTitle", data.site.title);
@@ -79,8 +68,8 @@ function render(rawData) {
         <p>${esc(suite.description)}</p>
         <div class="details">${(suite.tags || []).map(tag => `<span class="tag">${esc(tag)}</span>`).join("")}</div>
         <div class="actions">
-          <a class="btn primary" href="${esc(suite.downloadUrl || "#")}" target="_blank" rel="noopener">${esc(suite.downloadText || "Download")}</a>
-          <a class="btn" href="${esc(suite.notesUrl || "#")}" target="_blank" rel="noopener">${esc(suite.notesText || "Release Notes")}</a>
+          <a class="btn primary" href="${esc(suite.downloadUrl || "#")}">${esc(suite.downloadText || "Download")}</a>
+          <a class="btn" href="${esc(suite.notesUrl || "#")}">${esc(suite.notesText || "Release Notes")}</a>
         </div>
       </article>
     `).join("");
@@ -108,32 +97,11 @@ function render(rawData) {
   setText("adminNote", data.adminSection.note);
 }
 
-function getBrowserPreview() {
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    const parsed = saved ? JSON.parse(saved) : null;
-    return looksUsable(parsed) ? parsed : null;
-  } catch (error) {
-    console.warn("Ignoring broken browser-saved site data", error);
-    return null;
-  }
-}
-
 function boot() {
-  const scriptData = window.GB_SITE_DATA;
-  const previewMode = new URLSearchParams(window.location.search).get("preview") === "1";
-  const previewData = previewMode ? getBrowserPreview() : null;
-
-  if (looksUsable(previewData)) {
-    render(previewData);
+  if (looksUsable(window.GB_SITE_DATA)) {
+    render(window.GB_SITE_DATA);
     return;
   }
-
-  if (looksUsable(scriptData)) {
-    render(scriptData);
-    return;
-  }
-
   console.warn("No usable data found. Leaving static fallback HTML visible.");
 }
 
