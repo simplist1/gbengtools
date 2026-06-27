@@ -121,7 +121,8 @@ function getBrowserPreview() {
 
 function boot() {
   const scriptData = window.GB_SITE_DATA;
-  const previewData = getBrowserPreview();
+  const previewMode = new URLSearchParams(window.location.search).get("preview") === "1";
+  const previewData = previewMode ? getBrowserPreview() : null;
 
   if (looksUsable(previewData)) {
     render(previewData);
