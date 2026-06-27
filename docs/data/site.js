@@ -95,3 +95,13 @@ window.GB_SITE_DATA = {
     "note": "Use the URL-code editor to change site text, suite panels, tool rows, and GitHub Release links. Save browser preview for quick testing, then download or copy data/site.js when you want to commit the public version."
   }
 };
+
+try {
+  const isEditor = /\/editor\.html$/i.test(window.location.pathname);
+  const params = new URLSearchParams(window.location.search);
+  if (isEditor && params.get("draft") !== "1") {
+    localStorage.removeItem("gbengtools.siteData");
+  }
+} catch (error) {
+  console.warn("Could not clear stale editor draft", error);
+}
