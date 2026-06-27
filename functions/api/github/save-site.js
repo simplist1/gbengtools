@@ -41,6 +41,21 @@ async function getUser(token) {
   return githubJson('https://api.github.com/user', token);
 }
 
+async function triggerDeployHook(env) {
+  const hookUrl = env.CLOUDFLARE_DEPLOY_HOOK_URL || env.DEPLOY_HOOK_URL || '';
+  if (!hookUrl) {
+    return { triggered: false, reason: 'missing_deploy_hook' };
+  }
+
+  const response = await fetch(hookUrl, { method: 'POST' });
+  const text = await response.text().catch(() => '');
+  return {
+    triggered: response.ok,
+    status: response.status,
+    body: text.slice(0, 500)
+  };
+}
+
 export async function onRequestPost({ request, env }) {
   const cookies = parseCookies(request.headers.get('Cookie') || '');
   const token = cookies.gbgh_token;
@@ -81,6 +96,13 @@ export async function onRequestPost({ request, env }) {
       })
     });
 
+    let deploy = { triggered: false, reason: 'not_attempted' };
+    try {
+      deploy = await triggerDeployHook(env);
+    } catch (deployError) {
+      deploy = { triggered: false, error: deployError.message };
+    }
+
     return json({
       ok: true,
       login: user.login,
@@ -88,7 +110,8 @@ export async function onRequestPost({ request, env }) {
       branch,
       path: filePath,
       commit: update.commit && update.commit.sha,
-      html_url: update.commit && update.commit.html_url
+      html_url: update.commit && update.commit.html_url,
+      deploy
     });
   } catch (error) {
     return json({ ok: false, error: error.message }, 500);
