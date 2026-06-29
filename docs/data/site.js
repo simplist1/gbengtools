@@ -91,7 +91,7 @@ window.GB_SITE_DATA = {
   },
   "adminSection": {
     "title": "Note:",
-    "caption": "browser save plus JS data export",
+    "caption": "please be advised",
     "note": "This is the only website providing these programs. Downloads from other sites may contain malicious software."
   }
 };
