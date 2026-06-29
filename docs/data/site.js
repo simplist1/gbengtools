@@ -16,7 +16,7 @@ window.GB_SITE_DATA = {
   },
   "hero": {
     "kicker": "Production CAD Utility Portal",
-    "title": "Surveying and Civil 3D tools without the bloat.This is a test",
+    "title": "Surveying and Civil 3D tools without the bloat.",
     "body": "Suite installers for legacy AutoCAD / Land Desktop workflows and modern Civil 3D setups. Built around field-to-CAD production, point import, DXF output, adjustment tools, and deployment packages.",
     "primaryButton": "Download Suites",
     "secondaryButton": "Standalone Installers",
