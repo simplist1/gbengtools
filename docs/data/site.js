@@ -1,10 +1,10 @@
 window.GB_SITE_DATA = {
   "site": {
-    "title": "GB Engineering Tools",
+    "title": "Geodeta US Apps",
     "subtitle": "CAD / Survey / Civil Utilities",
     "githubUrl": "https://github.com/simplist1/gbengtools",
     "standaloneUrl": "https://simplist1.github.io/any2dxf_releases/",
-    "footerLeft": "GB Engineering Tools",
+    "footerLeft": "Geodeta US | MMSGEO",
     "footerRight": "apps.geodeta.us"
   },
   "nav": {
@@ -15,16 +15,16 @@ window.GB_SITE_DATA = {
     "github": "GitHub"
   },
   "hero": {
-    "kicker": "Production CAD Utility Portal",
-    "title": "Surveying and Civil 3D tools without the bloat.",
-    "body": "Suite installers for legacy AutoCAD / Land Desktop workflows and modern Civil 3D setups. Built around field-to-CAD production, point import, DXF output, adjustment tools, and deployment packages.",
+    "kicker": "production autodesk apps",
+    "title": "Surveying and Civil 3D tools for quality of life.",
+    "body": "Suite installers for legacy AutoCAD / Land Desktop workflows and modern Civil 3D setups. Apps and scripts made to streamline workflows and promote backwards compatibility.",
     "primaryButton": "Download Suites",
     "secondaryButton": "Standalone Installers",
     "thirdButton": "Included Tools"
   },
   "suitesSection": {
     "title": "Suite installers",
-    "caption": "centralized deployment packages"
+    "caption": "under development"
   },
   "suites": [
     {
@@ -37,7 +37,7 @@ window.GB_SITE_DATA = {
         "VBA",
         "LISP"
       ],
-      "downloadText": "Download Suite",
+      "downloadText": "Under Development",
       "downloadUrl": "#",
       "notesText": "Release Notes",
       "notesUrl": "#"
@@ -52,7 +52,7 @@ window.GB_SITE_DATA = {
         ".NET",
         "LISP"
       ],
-      "downloadText": "Download Suite",
+      "downloadText": "Under Development",
       "downloadUrl": "#",
       "notesText": "Release Notes",
       "notesUrl": "#"
@@ -63,8 +63,8 @@ window.GB_SITE_DATA = {
     "caption": "apps, scripts, and workflow helpers"
   },
   "standalonePanel": {
-    "title": "Standalone downloads",
-    "description": "Individual installers and scripts stay on the standalone catalog for now. This site becomes the clean front page for suite installers and major releases.",
+    "title": "Available standalone downloads",
+    "description": "Individual installers and scripts stay on the standalone catalog for now. Standalone downloads will be merged to this site in the future.",
     "buttonText": "Open Standalone Catalog",
     "buttonUrl": "https://simplist1.github.io/any2dxf_releases/"
   },
@@ -76,16 +76,12 @@ window.GB_SITE_DATA = {
         "description": "Point import and DXF export for legacy and modern CAD workflows."
       },
       {
-        "name": "LS Adjust",
+        "name": "Least Squares Adjustment",
         "description": "Move and rotate selected CAD objects to match control points."
       },
       {
-        "name": "C3D Tools",
-        "description": "Civil 3D 2027 utilities, bundle loading, and command helpers."
-      },
-      {
-        "name": "LISP Pack",
-        "description": "Startup scripts, menu targets, toolbar commands, and CAD helpers."
+        "name": "More .lsp scripts",
+        "description": "QOL LISP scripts for CAD supporting .lsp."
       }
     ]
   },
