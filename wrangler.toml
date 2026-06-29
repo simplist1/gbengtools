@@ -1,8 +1,4 @@
 name = "gbengtools"
-main = "src/worker.js"
+pages_build_output_dir = "docs"
 compatibility_date = "2026-06-26"
 compatibility_flags = ["nodejs_compat"]
-
-[assets]
-directory = "./docs"
-binding = "ASSETS"
