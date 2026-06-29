@@ -90,8 +90,8 @@ window.GB_SITE_DATA = {
     ]
   },
   "adminSection": {
-    "title": "Admin editor",
+    "title": "Note:",
     "caption": "browser save plus JS data export",
-    "note": "Use the URL-code editor to change site text, suite panels, tool rows, and GitHub Release links. Save browser preview for quick testing, then download or copy data/site.js when you want to commit the public version."
+    "note": "This is the only website providing these programs. Downloads from other sites may contain malicious software."
   }
 };
