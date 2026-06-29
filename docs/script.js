@@ -1,4 +1,7 @@
 const esc = (value = "") => String(value).replace(/[&<>"']/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[char]));
+const SITE_DATA_URL = "data/site.js";
+let activeSiteDataKey = "";
+let updateNoticeShown = false;
 
 function setText(id, value) {
   const node = document.getElementById(id);
@@ -26,6 +29,43 @@ function cleanData(data = {}) {
 
 function looksUsable(data) {
   return !!(data && data.site && data.site.title && data.hero && data.hero.title && Array.isArray(data.suites) && data.suites.length);
+}
+
+function parseSiteJs(text) {
+  const match = String(text || "").match(/window\.GB_SITE_DATA\s*=\s*([\s\S]*?);\s*$/);
+  if (!match) throw new Error("Could not read site.js data.");
+  return JSON.parse(match[1]);
+}
+
+async function fetchFreshSiteData() {
+  const response = await fetch(`${SITE_DATA_URL}?sync=${Date.now()}`, { cache: "no-store" });
+  if (!response.ok) throw new Error(`Could not load latest site.js: ${response.status}`);
+  return parseSiteJs(await response.text());
+}
+
+function dataKey(data) {
+  return JSON.stringify(cleanData(data || {}));
+}
+
+function showUpdateNotice() {
+  if (updateNoticeShown) return;
+  updateNoticeShown = true;
+  const bar = document.createElement("div");
+  bar.id = "updateNotice";
+  bar.style.cssText = "position:fixed;top:0;left:0;right:0;z-index:9999;display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;padding:10px 14px;background:#e69b22;color:#171207;font-weight:800;font-family:Arial,sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.28)";
+  bar.innerHTML = '<span>Update is live. Please refresh.</span><button type="button" id="refreshUpdateBtn" style="border:1px solid rgba(0,0,0,.35);background:#171207;color:#fff;padding:6px 10px;font-weight:800;cursor:pointer">Refresh</button><button type="button" id="dismissUpdateBtn" style="border:1px solid rgba(0,0,0,.35);background:transparent;color:#171207;padding:6px 10px;font-weight:800;cursor:pointer">Dismiss</button>';
+  document.body.appendChild(bar);
+  document.getElementById("refreshUpdateBtn").onclick = () => location.reload();
+  document.getElementById("dismissUpdateBtn").onclick = () => bar.remove();
+}
+
+async function checkForUpdates() {
+  try {
+    const latest = await fetchFreshSiteData();
+    if (looksUsable(latest) && activeSiteDataKey && dataKey(latest) !== activeSiteDataKey) showUpdateNotice();
+  } catch (error) {
+    console.warn("Update check failed.", error);
+  }
 }
 
 function render(rawData) {
@@ -97,12 +137,28 @@ function render(rawData) {
   setText("adminNote", data.adminSection.note);
 }
 
-function boot() {
-  if (looksUsable(window.GB_SITE_DATA)) {
-    render(window.GB_SITE_DATA);
-    return;
+async function boot() {
+  const fallback = window.GB_SITE_DATA;
+  if (looksUsable(fallback)) {
+    render(fallback);
+    activeSiteDataKey = dataKey(fallback);
   }
-  console.warn("No usable data found. Leaving static fallback HTML visible.");
+
+  try {
+    const latest = await fetchFreshSiteData();
+    if (looksUsable(latest)) {
+      window.GB_SITE_DATA = latest;
+      render(latest);
+      activeSiteDataKey = dataKey(latest);
+    } else if (!looksUsable(fallback)) {
+      console.warn("No usable data found. Leaving static fallback HTML visible.");
+    }
+  } catch (error) {
+    if (!looksUsable(fallback)) console.warn("No usable data found. Leaving static fallback HTML visible.");
+    console.warn("Fresh site.js load failed.", error);
+  }
+
+  setInterval(checkForUpdates, 60000);
 }
 
 boot();
