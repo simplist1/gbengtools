@@ -104,3 +104,7 @@ window.GB_SITE_DATA = {
     "note": "This is the only website providing these programs. Downloads from other sites may contain malicious software."
   }
 };
+if (location.pathname.endsWith('/editor.html') || location.pathname.endsWith('/editor')) {
+  if (!document.querySelector('link[data-announcement-css]')) { const l=document.createElement('link'); l.rel='stylesheet'; l.href='announcements.css?v=20260701announcements'; l.dataset.announcementCss='true'; document.head.appendChild(l); }
+  if (!document.querySelector('script[data-announcement-editor]')) { const s=document.createElement('script'); s.src='editor-announcements.js?v=20260701announcements'; s.dataset.announcementEditor='true'; document.body.appendChild(s); }
+}
