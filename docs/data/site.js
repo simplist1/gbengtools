@@ -14,6 +14,19 @@ window.GB_SITE_DATA = {
     "admin": "Admin",
     "github": "GitHub"
   },
+  "announcements": {
+    "enabled": false,
+    "label": "Update",
+    "marquee": true,
+    "speedSeconds": 28,
+    "items": [
+      {
+        "text": "New update is live.",
+        "url": "#",
+        "linkText": "View details"
+      }
+    ]
+  },
   "hero": {
     "kicker": "production autodesk apps",
     "title": "Surveying and Civil 3D tools for quality of life.",
