@@ -1,10 +1,10 @@
 {
   "site": {
-    "title": "GB Engineering Tools",
+    "title": "Geodeta US Apps",
     "subtitle": "CAD / Survey / Civil Utilities",
     "githubUrl": "https://github.com/simplist1/gbengtools",
     "standaloneUrl": "https://simplist1.github.io/any2dxf_releases/",
-    "footerLeft": "GB Engineering Tools",
+    "footerLeft": "Geodeta US | MMSGEO",
     "footerRight": "apps.geodeta.us"
   },
   "nav": {
@@ -14,25 +14,43 @@
     "admin": "Admin",
     "github": "GitHub"
   },
+  "announcements": {
+    "enabled": false,
+    "label": "Update",
+    "marquee": true,
+    "speedSeconds": 28,
+    "items": [
+      {
+        "text": "New update is live.",
+        "url": "#",
+        "linkText": "View details"
+      }
+    ]
+  },
   "hero": {
-    "kicker": "Production CAD Utility Portal",
-    "title": "Surveying and Civil 3D tools without the bloat.",
-    "body": "Suite installers for legacy AutoCAD / Land Desktop workflows and modern Civil 3D setups. Built around field-to-CAD production, point import, DXF output, adjustment tools, and deployment packages.",
+    "kicker": "production autodesk apps",
+    "title": "Surveying and Civil 3D tools for quality of life.",
+    "body": "Suite installers for legacy AutoCAD / Land Desktop workflows and modern Civil 3D setups. Apps and scripts made to streamline workflows and promote backwards compatibility.",
     "primaryButton": "Download Suites",
     "secondaryButton": "Standalone Installers",
     "thirdButton": "Included Tools"
   },
   "suitesSection": {
     "title": "Suite installers",
-    "caption": "centralized deployment packages"
+    "caption": "under development"
   },
   "suites": [
     {
       "name": "GB Tools Suite 2000",
       "subtitle": "AutoCAD / Land Desktop 2000",
       "description": "Installer package for old-school production machines that need reliable LISP/VBA utilities and DXF-based workflows.",
-      "tags": ["AutoCAD 2000", "Land Desktop", "VBA", "LISP"],
-      "downloadText": "Download Suite",
+      "tags": [
+        "AutoCAD 2000",
+        "Land Desktop",
+        "VBA",
+        "LISP"
+      ],
+      "downloadText": "Under Development",
       "downloadUrl": "#",
       "notesText": "Release Notes",
       "notesUrl": "#"
@@ -41,8 +59,13 @@
       "name": "GB Tools Suite 2027",
       "subtitle": "Civil 3D / AutoCAD 2027",
       "description": "Installer package for modern Civil 3D workflows using .NET tools, LISP helpers, and bundle-style deployment.",
-      "tags": ["Civil 3D 2027", "AutoCAD 2027", ".NET", "LISP"],
-      "downloadText": "Download Suite",
+      "tags": [
+        "Civil 3D 2027",
+        "AutoCAD 2027",
+        ".NET",
+        "LISP"
+      ],
+      "downloadText": "Under Development",
       "downloadUrl": "#",
       "notesText": "Release Notes",
       "notesUrl": "#"
@@ -53,23 +76,31 @@
     "caption": "apps, scripts, and workflow helpers"
   },
   "standalonePanel": {
-    "title": "Standalone downloads",
-    "description": "Individual installers and scripts stay on the standalone catalog for now. This site becomes the clean front page for suite installers and major releases.",
+    "title": "Available standalone downloads",
+    "description": "Individual installers and scripts stay on the standalone catalog for now. Standalone downloads will be merged to this site in the future.",
     "buttonText": "Open Standalone Catalog",
     "buttonUrl": "https://simplist1.github.io/any2dxf_releases/"
   },
   "toolCatalog": {
     "title": "Tool catalog",
     "rows": [
-      {"name": "Any2DXF", "description": "Point import and DXF export for legacy and modern CAD workflows."},
-      {"name": "LS Adjust", "description": "Move and rotate selected CAD objects to match control points."},
-      {"name": "C3D Tools", "description": "Civil 3D 2027 utilities, bundle loading, and command helpers."},
-      {"name": "LISP Pack", "description": "Startup scripts, menu targets, toolbar commands, and CAD helpers."}
+      {
+        "name": "Any2DXF",
+        "description": "Point import and DXF export for legacy and modern CAD workflows."
+      },
+      {
+        "name": "Least Squares Adjustment",
+        "description": "Move and rotate selected CAD objects to match control points."
+      },
+      {
+        "name": "More .lsp scripts",
+        "description": "QOL LISP scripts for CAD supporting .lsp."
+      }
     ]
   },
   "adminSection": {
-    "title": "Admin editor",
-    "caption": "browser save plus JSON export",
-    "note": "Use the URL-code editor to change site text, suite panels, tool rows, and GitHub Release links. Save browser preview for quick testing, then download or copy data/site.json when you want to commit the public version."
+    "title": "Note:",
+    "caption": "please be advised",
+    "note": "This is the only website providing these programs. Downloads from other sites may contain malicious software."
   }
 }
