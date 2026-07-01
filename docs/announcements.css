@@ -1,0 +1,17 @@
+body.has-update-notice{padding-top:var(--update-notice-height,0px)}
+#announcementHost{position:relative;z-index:2}
+#announcementHost[hidden]{display:none!important}
+.announcement-bar{border-bottom:1px solid var(--line);background:linear-gradient(90deg,rgba(230,155,34,.2),rgba(24,27,25,.98),rgba(230,155,34,.14));color:var(--text);overflow:hidden;box-shadow:0 10px 26px rgba(0,0,0,.2)}
+.announcement-inner{width:min(1100px,calc(100% - 32px));min-height:42px;margin:0 auto;display:flex;align-items:center;gap:14px}
+.announcement-label{flex:0 0 auto;border:1px solid rgba(230,155,34,.55);background:rgba(230,155,34,.15);color:var(--accent);font-family:var(--mono);font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:5px 8px}
+.announcement-messages{min-width:0;flex:1;color:#f2e6d0;font-weight:800;line-height:1.35}
+.announcement-track{display:inline-flex;align-items:center;gap:16px;max-width:100%;white-space:normal}
+.announcement-marquee{overflow:hidden;white-space:nowrap}
+.announcement-marquee .announcement-track{max-width:none;min-width:max-content;white-space:nowrap;animation:announcementScroll var(--announcement-speed,28s) linear infinite}
+.announcement-marquee:hover .announcement-track{animation-play-state:paused}
+.announcement-item{display:inline-flex;align-items:center;gap:8px}
+.announcement-sep{color:var(--accent);opacity:.8}
+.announcement-link{color:var(--accent);text-decoration:underline;text-underline-offset:3px}
+@keyframes announcementScroll{from{transform:translateX(100%)}to{transform:translateX(-100%)}}
+@media(max-width:820px){.announcement-inner{align-items:flex-start;flex-direction:column;padding:10px 0}.announcement-marquee .announcement-track{animation-duration:calc(var(--announcement-speed,28s) * 1.35)}}
+@media(prefers-reduced-motion:reduce){.announcement-marquee{white-space:normal}.announcement-marquee .announcement-track{animation:none;min-width:0;white-space:normal;transform:none}}
