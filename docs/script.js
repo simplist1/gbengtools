@@ -15,13 +15,11 @@ function setHref(id, value) {
 
 function normalizeAnnouncements(config = {}) {
   const items = Array.isArray(config.items)
-    ? config.items
-        .map(item => ({
-          text: String(item && item.text ? item.text : "").trim(),
-          url: String(item && item.url ? item.url : "").trim(),
-          linkText: String(item && item.linkText ? item.linkText : "").trim()
-        }))
-        .filter(item => item.text)
+    ? config.items.map(item => ({
+        text: String(item && item.text ? item.text : "").trim(),
+        url: String(item && item.url ? item.url : "").trim(),
+        linkText: String(item && item.linkText ? item.linkText : "").trim()
+      })).filter(item => item.text)
     : [];
 
   return {
@@ -43,6 +41,8 @@ function cleanData(data = {}) {
     suites: Array.isArray(data.suites) ? data.suites : [],
     toolsSection: data.toolsSection || {},
     standalonePanel: data.standalonePanel || {},
+    appsSection: data.appsSection || {},
+    apps: Array.isArray(data.apps) ? data.apps : [],
     toolCatalog: data.toolCatalog || {},
     adminSection: data.adminSection || {}
   };
@@ -53,7 +53,7 @@ function looksUsable(data) {
 }
 
 function parseSiteJs(text) {
-  const match = String(text || "").match(/window\.GB_SITE_DATA\s*=\s*([\s\S]*?);\s*$/);
+  const match = String(text || "").match(/window\.GB_SITE_DATA\s*=\s*([\s\S]*?);\s*(?:\/\/.*|\s)*$/);
   if (!match) throw new Error("Could not read site.js data.");
   return JSON.parse(match[1]);
 }
@@ -78,19 +78,16 @@ function clearUpdateNoticeOffset(bar, resizeHandler) {
 function showUpdateNotice() {
   if (updateNoticeShown) return;
   updateNoticeShown = true;
-
   const bar = document.createElement("div");
   bar.id = "updateNotice";
   bar.className = "update-notice";
   bar.style.cssText = "position:fixed;top:0;left:0;right:0;z-index:20000;display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap;padding:10px 14px;background:#e69b22;color:#171207;font-weight:800;font-family:Arial,sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.28)";
   bar.innerHTML = '<span>Update is live. Please refresh.</span><button type="button" id="refreshUpdateBtn" style="border:1px solid rgba(0,0,0,.35);background:#171207;color:#fff;padding:6px 10px;font-weight:800;cursor:pointer">Refresh</button><button type="button" id="dismissUpdateBtn" style="border:1px solid rgba(0,0,0,.35);background:transparent;color:#171207;padding:6px 10px;font-weight:800;cursor:pointer">Dismiss</button>';
-
   const syncOffset = () => document.documentElement.style.setProperty("--update-notice-height", `${bar.offsetHeight}px`);
   document.body.appendChild(bar);
   document.body.classList.add("has-update-notice");
   requestAnimationFrame(syncOffset);
   window.addEventListener("resize", syncOffset);
-
   bar.querySelector("#refreshUpdateBtn").onclick = () => location.reload();
   bar.querySelector("#dismissUpdateBtn").onclick = () => clearUpdateNoticeOffset(bar, syncOffset);
 }
@@ -107,19 +104,16 @@ async function checkForUpdates() {
 function renderAnnouncements(rawConfig) {
   const host = document.getElementById("announcementHost");
   if (!host) return;
-
   const config = normalizeAnnouncements(rawConfig || {});
   if (!config.enabled || !config.items.length) {
     host.hidden = true;
     host.innerHTML = "";
     return;
   }
-
   const itemHtml = config.items.map(item => {
     const link = item.url ? ` <a class="announcement-link" href="${esc(item.url)}">${esc(item.linkText || "View")}</a>` : "";
     return `<span class="announcement-item">${esc(item.text)}${link}</span>`;
   }).join('<span class="announcement-sep" aria-hidden="true">•</span>');
-
   host.hidden = false;
   host.innerHTML = `
     <div class="announcement-bar" role="region" aria-label="${esc(config.label)}">
@@ -133,10 +127,31 @@ function renderAnnouncements(rawConfig) {
   `;
 }
 
+function renderCards(containerId, cards, fallbackDownloadText = "Download") {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  const rows = Array.isArray(cards) ? cards : [];
+  if (!rows.length) {
+    container.innerHTML = "";
+    return;
+  }
+  container.innerHTML = rows.map(card => `
+    <article class="card">
+      <h3>${esc(card.name)}</h3>
+      <div class="sub">${esc(card.subtitle)}</div>
+      <p>${esc(card.description)}</p>
+      <div class="details">${(card.tags || []).map(tag => `<span class="tag">${esc(tag)}</span>`).join("")}</div>
+      <div class="actions">
+        <a class="btn primary" href="${esc(card.downloadUrl || "#")}">${esc(card.downloadText || fallbackDownloadText)}</a>
+        <a class="btn" href="${esc(card.notesUrl || "#")}">${esc(card.notesText || "Release Notes")}</a>
+      </div>
+    </article>
+  `).join("");
+}
+
 function render(rawData) {
   const data = cleanData(rawData);
   document.title = data.site.title || document.title || "GB Engineering Tools";
-
   renderAnnouncements(data.announcements);
 
   setText("brandTitle", data.site.title);
@@ -148,6 +163,7 @@ function render(rawData) {
   setText("navSuites", data.nav.suites);
   setText("navTools", data.nav.tools);
   setText("navStandalone", data.nav.standalone);
+  setText("navApps", data.nav.apps || "Apps");
   setText("navAdmin", data.nav.admin);
   setText("navGithub", data.nav.github);
 
@@ -163,34 +179,23 @@ function render(rawData) {
 
   setText("suitesTitle", data.suitesSection.title);
   setText("suitesCaption", data.suitesSection.caption);
+  renderCards("suiteGrid", data.suites, "Download Suite");
+
   setText("toolsTitle", data.toolsSection.title);
   setText("toolsCaption", data.toolsSection.caption);
-
-  const suiteGrid = document.getElementById("suiteGrid");
-  if (suiteGrid && data.suites.length) {
-    suiteGrid.innerHTML = data.suites.map(suite => `
-      <article class="card">
-        <h3>${esc(suite.name)}</h3>
-        <div class="sub">${esc(suite.subtitle)}</div>
-        <p>${esc(suite.description)}</p>
-        <div class="details">${(suite.tags || []).map(tag => `<span class="tag">${esc(tag)}</span>`).join("")}</div>
-        <div class="actions">
-          <a class="btn primary" href="${esc(suite.downloadUrl || "#")}">${esc(suite.downloadText || "Download")}</a>
-          <a class="btn" href="${esc(suite.notesUrl || "#")}">${esc(suite.notesText || "Release Notes")}</a>
-        </div>
-      </article>
-    `).join("");
-  }
-
   setText("standaloneTitle", data.standalonePanel.title);
   setText("standaloneDescription", data.standalonePanel.description);
   setText("standaloneButton", data.standalonePanel.buttonText);
   setHref("standaloneButton", data.standalonePanel.buttonUrl || data.site.standaloneUrl);
 
+  setText("appsTitle", data.appsSection.title || "Apps");
+  setText("appsCaption", data.appsSection.caption || "standalone app installers");
+  renderCards("appGrid", data.apps, "Download App");
+
   setText("toolCatalogTitle", data.toolCatalog.title);
   const toolList = document.getElementById("toolList");
   const rows = Array.isArray(data.toolCatalog.rows) ? data.toolCatalog.rows : [];
-  if (toolList && rows.length) {
+  if (toolList) {
     toolList.innerHTML = rows.map(row => `
       <div class="tool-row">
         <strong>${esc(row.name)}</strong>
