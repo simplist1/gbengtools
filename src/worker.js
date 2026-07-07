@@ -1,6 +1,4 @@
 const COOKIE_BASE = 'Path=/; Secure; SameSite=Lax';
-const LOADER_START = '// GB_ANNOUNCEMENT_EDITOR_LOADER_START';
-const LOADER_END = '// GB_ANNOUNCEMENT_EDITOR_LOADER_END';
 
 function encodeCookie(value) { return encodeURIComponent(value); }
 function makeCookie(name, value, options = {}) {
@@ -22,8 +20,10 @@ function parseCookies(header = '') {
     return [part.slice(0, index).trim(), decodeURIComponent(part.slice(index + 1).trim())];
   }).filter(Boolean));
 }
-function json(data, status = 200) {
-  return new Response(JSON.stringify(data, null, 2), { status, headers: { 'Content-Type': 'application/json; charset=utf-8' } });
+function json(data, status = 200, cookies = []) {
+  const headers = new Headers({ 'Content-Type': 'application/json; charset=utf-8' });
+  cookies.forEach(value => headers.append('Set-Cookie', value));
+  return new Response(JSON.stringify(data, null, 2), { status, headers });
 }
 function text(message, status = 200) {
   return new Response(message, { status, headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
@@ -47,15 +47,6 @@ function toBase64(textValue) {
   let binary = '';
   bytes.forEach(byte => binary += String.fromCharCode(byte));
   return btoa(binary);
-}
-function announcementEditorLoader() {
-  return `${LOADER_START}\nif (location.pathname.endsWith('/editor.html') || location.pathname.endsWith('/editor')) {\n  if (!document.querySelector('link[data-announcement-css]')) { const l=document.createElement('link'); l.rel='stylesheet'; l.href='announcements.css?v=20260701announcements'; l.dataset.announcementCss='true'; document.head.appendChild(l); }\n  if (!document.querySelector('script[data-announcement-editor]')) { const s=document.createElement('script'); s.src='editor-announcements.js?v=20260701announcements'; s.dataset.announcementEditor='true'; document.body.appendChild(s); }\n}\n${LOADER_END}\n`;
-}
-function escapeRegExp(value) { return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
-function normalizeSiteContent(content) {
-  const markerBlock = new RegExp(`${escapeRegExp(LOADER_START)}[\\s\\S]*?${escapeRegExp(LOADER_END)}\\n?`, 'g');
-  const legacyLoader = /if \(location\.pathname\.endsWith\('\/editor\.html'\)[\s\S]*?\n}\n?/g;
-  return announcementEditorLoader() + String(content || '').replace(markerBlock, '').replace(legacyLoader, '').trimStart();
 }
 async function githubJson(url, token, options = {}) {
   const response = await fetch(url, {
@@ -139,7 +130,7 @@ async function me(request, env) {
     const allowedLogin = env.GITHUB_ALLOWED_LOGIN || 'simplist1';
     return json({ authenticated: true, login: user.login, allowed: !allowedLogin || user.login === allowedLogin, allowedLogin, repository: env.GITHUB_REPOSITORY || 'simplist1/gbengtools' });
   } catch (error) {
-    return json({ authenticated: false, error: error.message }, 401);
+    return json({ authenticated: false, error: `${error.message}. Please sign in with GitHub again.` }, 401, [clearCookie('gbgh_token'), clearCookie('gbgh_user', false)]);
   }
 }
 function logout(request) {
@@ -155,10 +146,9 @@ async function saveSite(request, env) {
   const allowedLogin = env.GITHUB_ALLOWED_LOGIN || 'simplist1';
   const filePath = env.GITHUB_SITE_DATA_PATH || 'docs/data/site.js';
   const body = await request.json().catch(() => null);
-  let content = body && typeof body.content === 'string' ? body.content : '';
+  const content = body && typeof body.content === 'string' ? body.content : '';
   const message = body && typeof body.message === 'string' && body.message.trim() ? body.message.trim() : 'Update site data from live editor';
   if (!content.startsWith('window.GB_SITE_DATA = ')) return json({ ok: false, error: 'Expected content to start with window.GB_SITE_DATA = .' }, 400);
-  content = normalizeSiteContent(content);
   if (content.length > 250000) return json({ ok: false, error: 'site.js content is too large.' }, 400);
   try {
     const user = await githubJson('https://api.github.com/user', token);
