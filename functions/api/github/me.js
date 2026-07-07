@@ -6,11 +6,21 @@ function parseCookies(header = '') {
   }).filter(Boolean));
 }
 
-function json(data, status = 200) {
-  return new Response(JSON.stringify(data, null, 2), {
-    status,
-    headers: { 'Content-Type': 'application/json; charset=utf-8' }
-  });
+const COOKIE_BASE = 'Path=/; Secure; SameSite=Lax';
+function makeCookie(name, value, options = {}) {
+  const parts = [`${name}=${encodeURIComponent(value)}`, COOKIE_BASE];
+  if (options.httpOnly) parts.push('HttpOnly');
+  if (options.maxAge != null) parts.push(`Max-Age=${options.maxAge}`);
+  return parts.join('; ');
+}
+function clearCookie(name, httpOnly = true) {
+  return makeCookie(name, '', { httpOnly, maxAge: 0 });
+}
+
+function json(data, status = 200, cookies = []) {
+  const headers = new Headers({ 'Content-Type': 'application/json; charset=utf-8' });
+  cookies.forEach(value => headers.append('Set-Cookie', value));
+  return new Response(JSON.stringify(data, null, 2), { status, headers });
 }
 
 async function githubJson(url, token) {
@@ -44,6 +54,10 @@ export async function onRequestGet({ request, env }) {
       repository
     });
   } catch (error) {
-    return json({ authenticated: false, error: error.message }, 401);
+    return json(
+      { authenticated: false, error: `${error.message}. Please sign in with GitHub again.` },
+      401,
+      [clearCookie('gbgh_token'), clearCookie('gbgh_user', false)]
+    );
   }
 }
