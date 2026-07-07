@@ -45,7 +45,12 @@ window.GB_SITE_DATA = {
       "name": "GB Tools Suite 2000",
       "subtitle": "AutoCAD / Land Desktop 2000",
       "description": "Installer package for old-school production machines that need reliable LISP/VBA utilities and DXF-based workflows.",
-      "tags": ["AutoCAD 2000", "Land Desktop", "VBA", "LISP"],
+      "tags": [
+        "AutoCAD 2000",
+        "Land Desktop",
+        "VBA",
+        "LISP"
+      ],
       "downloadText": "Under Development",
       "downloadUrl": "#",
       "notesText": "Release Notes",
@@ -55,7 +60,12 @@ window.GB_SITE_DATA = {
       "name": "GB Tools Suite 2027",
       "subtitle": "Civil 3D / AutoCAD 2027",
       "description": "Installer package for modern Civil 3D workflows using .NET tools, LISP helpers, and bundle-style deployment.",
-      "tags": ["Civil 3D 2027", "AutoCAD 2027", ".NET", "LISP"],
+      "tags": [
+        "Civil 3D 2027",
+        "AutoCAD 2027",
+        ".NET",
+        "LISP"
+      ],
       "downloadText": "Under Development",
       "downloadUrl": "#",
       "notesText": "Release Notes",
@@ -73,15 +83,17 @@ window.GB_SITE_DATA = {
     "buttonUrl": "https://simplist1.github.io/any2dxf_releases/"
   },
   "appsSection": {
-    "title": "Apps",
-    "caption": "standalone app installers"
+    "title": "Apps and extras",
+    "caption": "standalone app"
   },
   "apps": [
     {
-      "name": "Any2DXF",
-      "subtitle": "Point import / DXF export",
-      "description": "Standalone app for converting survey point files into clean DXF output for legacy and modern CAD workflows.",
-      "tags": ["PNEZD", "DXF", "AutoCAD", "Civil 3D"],
+      "name": "Icon Studio",
+      "subtitle": "Icon creation",
+      "description": "Standalone app for creating icons for AutoCAD buttons & more. Easy to use editor with pro features.",
+      "tags": [
+        "v0.3"
+      ],
       "downloadText": "Download App",
       "downloadUrl": "https://simplist1.github.io/any2dxf_releases/",
       "notesText": "Release Notes",
