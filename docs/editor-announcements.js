@@ -23,13 +23,7 @@
     if (!match) throw new Error("Could not read site.js data.");
     return JSON.parse(match[1]);
   }
-  function toSiteJs(data) { return "window.GB_SITE_DATA = " + JSON.stringify(data, null, 2) + ";\n" + loaderSnippet(); }
-  function loaderSnippet() {
-    return "if (location.pathname.endsWith('/editor.html') || location.pathname.endsWith('/editor')) {\n" +
-      "  if (!document.querySelector('link[data-announcement-css]')) { const l=document.createElement('link'); l.rel='stylesheet'; l.href='announcements.css?v=20260701announcements'; l.dataset.announcementCss='true'; document.head.appendChild(l); }\n" +
-      "  if (!document.querySelector('script[data-announcement-editor]')) { const s=document.createElement('script'); s.src='editor-announcements.js?v=20260701announcements'; s.dataset.announcementEditor='true'; document.body.appendChild(s); }\n" +
-      "}\n";
-  }
+  function toSiteJs(data) { return "window.GB_SITE_DATA = " + JSON.stringify(data, null, 2) + ";\n"; }
   async function fetchLatest() {
     const response = await fetch(`${SITE_DATA_URL}?sync=${Date.now()}`, { cache:"no-store" });
     if (!response.ok) throw new Error(`Could not load latest site.js: ${response.status}`);
@@ -49,7 +43,7 @@
     if (document.querySelector("link[data-announcement-css]")) return;
     const link = document.createElement("link");
     link.rel = "stylesheet";
-    link.href = "announcements.css?v=20260701announcements";
+    link.href = "announcements.css?v=20260707apps";
     link.dataset.announcementCss = "true";
     document.head.appendChild(link);
   }
@@ -181,7 +175,7 @@
       const result = await response.json();
       authed = !!(result.authenticated && result.allowed);
       render();
-      setStatus(authed ? "Announcement editor unlocked." : "Sign in with GitHub to edit announcements.");
+      setStatus(authed ? "Announcement editor unlocked." : (result.error ? result.error + ". Click GitHub Login to reconnect." : "Sign in with GitHub to edit announcements."));
     } catch (error) {
       authed = false;
       render();
