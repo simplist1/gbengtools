@@ -89,15 +89,15 @@ window.GB_SITE_DATA = {
   "apps": [
     {
       "name": "Icon Studio",
-      "subtitle": "Icon creation",
+      "subtitle": "Version 0.3",
       "description": "Standalone app for creating icons for AutoCAD buttons & more. Easy to use editor with pro features.",
       "tags": [
-        "v0.3"
+        ".exe"
       ],
       "downloadText": "Download App",
-      "downloadUrl": "https://simplist1.github.io/any2dxf_releases/",
+      "downloadUrl": "https://github.com/simplist1/gbengtools/releases/download/apps/Icon.Studio.exe",
       "notesText": "Release Notes",
-      "notesUrl": "https://simplist1.github.io/any2dxf_releases/"
+      "notesUrl": "https://github.com/simplist1/gbengtools/releases/tag/apps"
     }
   ],
   "toolCatalog": {
@@ -119,7 +119,7 @@ window.GB_SITE_DATA = {
   },
   "adminSection": {
     "title": "Note:",
-    "caption": "please be advised",
+    "caption": "",
     "note": "This is the only website providing these programs. Downloads from other sites may contain malicious software."
   }
 };
