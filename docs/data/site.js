@@ -123,3 +123,26 @@ window.GB_SITE_DATA = {
     "note": "This is the only website providing these programs. Downloads from other sites may contain malicious software."
   }
 };
+
+(() => {
+  async function lockManifestButton() {
+    const button = document.getElementById("manifestBtn");
+    if (!button) return;
+
+    button.disabled = true;
+
+    try {
+      const response = await fetch("/api/github/me", { credentials: "include" });
+      const result = await response.json();
+      button.disabled = !(result.authenticated && result.allowed);
+    } catch {
+      button.disabled = true;
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", lockManifestButton);
+  } else {
+    lockManifestButton();
+  }
+})();
