@@ -1,0 +1,215 @@
+{
+  "schemaVersion": 1,
+  "categories": [
+    {
+      "id": "plugins",
+      "name": "Plugins",
+      "subcategories": [
+        {
+          "id": "any2dxf",
+          "name": "Any2DXF",
+          "tools": [
+            {
+              "id": "any2dxf-vba",
+              "name": "Any2DXF for AutoCAD 2000 and up",
+              "version": "1.3.0",
+              "runtime": "VBA",
+              "compatibility": [
+                {
+                  "products": [
+                    "AutoCAD",
+                    "Civil 3D",
+                    "Land Desktop"
+                  ],
+                  "minimumYear": 2000,
+                  "maximumYear": 2026
+                }
+              ]
+            },
+            {
+              "id": "any2dxf-net47",
+              "name": "Any2DXF for AutoCAD 2020",
+              "version": "2.1.0",
+              "runtime": ".NET 4.7",
+              "compatibility": [
+                {
+                  "products": [
+                    "AutoCAD",
+                    "Civil 3D"
+                  ],
+                  "minimumYear": 2020,
+                  "maximumYear": 2020
+                }
+              ]
+            },
+            {
+              "id": "any2dxf-net10",
+              "name": "Any2DXF for AutoCAD 2027",
+              "version": "3.0.0",
+              "runtime": ".NET 10",
+              "compatibility": [
+                {
+                  "products": [
+                    "AutoCAD",
+                    "Civil 3D"
+                  ],
+                  "minimumYear": 2027,
+                  "maximumYear": 2027
+                }
+              ]
+            },
+            {
+              "id": "any2dxf-lt",
+              "name": "Any2DXF LT for AutoCAD LT 2024",
+              "version": "1.0.0",
+              "runtime": "LISP",
+              "compatibility": [
+                {
+                  "products": [
+                    "AutoCAD LT"
+                  ],
+                  "minimumYear": 2024,
+                  "maximumYear": null
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "scripts",
+      "name": "Scripts",
+      "subcategories": [
+        {
+          "id": "drafting-utilities",
+          "name": "Drafting Utilities",
+          "tools": [
+            {
+              "id": "contour-labels",
+              "name": "Polyline Contour Labels",
+              "version": "1.0.0",
+              "runtime": "LISP",
+              "compatibility": [
+                {
+                  "products": [
+                    "AutoCAD",
+                    "Civil 3D"
+                  ],
+                  "minimumYear": 2020,
+                  "maximumYear": null
+                }
+              ]
+            },
+            {
+              "id": "quick-text",
+              "name": "Quick Text Style Changer",
+              "version": "1.0.0",
+              "runtime": "LISP",
+              "compatibility": [
+                {
+                  "products": [
+                    "AutoCAD",
+                    "Civil 3D"
+                  ],
+                  "minimumYear": 2020,
+                  "maximumYear": null
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "point-utilities",
+          "name": "Point Utilities",
+          "tools": [
+            {
+              "id": "keyzone",
+              "name": "KeyZone Helper",
+              "version": "1.0.0",
+              "runtime": "LISP",
+              "compatibility": [
+                {
+                  "products": [
+                    "Civil 3D"
+                  ],
+                  "minimumYear": 2020,
+                  "maximumYear": null
+                }
+              ]
+            },
+            {
+              "id": "quick-10",
+              "name": "Quick 10 Scale",
+              "version": "1.0.0",
+              "runtime": "LISP",
+              "compatibility": [
+                {
+                  "products": [
+                    "Civil 3D"
+                  ],
+                  "minimumYear": 2020,
+                  "maximumYear": null
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "miscellaneous",
+          "name": "Miscellaneous",
+          "tools": [
+            {
+              "id": "least-squares",
+              "name": "Least Squares Adjust Objects",
+              "version": "1.0.0",
+              "runtime": "LISP",
+              "compatibility": [
+                {
+                  "products": [
+                    "AutoCAD",
+                    "Civil 3D"
+                  ],
+                  "minimumYear": 2020,
+                  "maximumYear": null
+                }
+              ]
+            },
+            {
+              "id": "easy-spacing",
+              "name": "Easy Spacing",
+              "version": "1.0.0",
+              "runtime": "LISP",
+              "compatibility": [
+                {
+                  "products": [
+                    "AutoCAD",
+                    "Civil 3D"
+                  ],
+                  "minimumYear": 2020,
+                  "maximumYear": null
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "apps",
+      "name": "Apps",
+      "tools": [
+        {
+          "id": "icon-studio",
+          "name": "AutoCAD Icon Studio",
+          "version": "1.0.0",
+          "runtime": ".NET",
+          "windowsSupport": [
+            "Windows 10",
+            "Windows 11"
+          ]
+        }
+      ]
+    }
+  ]
+}
