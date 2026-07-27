@@ -74,6 +74,11 @@
               ]
             }
           ]
+        },
+        {
+          "id": "temporary",
+          "name": "Coming Soon",
+          "tools": []
         }
       ]
     },
