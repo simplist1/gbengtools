@@ -203,7 +203,7 @@
           "id": "icon-studio",
           "name": "AutoCAD Icon Studio",
           "version": "1.0.0",
-          "runtime": ".NET",
+          "runtime": ".EXE",
           "windowsSupport": [
             "Windows 10",
             "Windows 11"
