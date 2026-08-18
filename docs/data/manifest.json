@@ -230,6 +230,16 @@
             "Windows 10",
             "Windows 11"
           ]
+        },
+        {
+          "id": "rsr",
+          "name": "RAW + SURVEY Reviewer",
+          "version": "1.0.0",
+          "runtime": ".EXE",
+          "windowsSupport": [
+            "Windows 10",
+            "Windows 11"
+          ]
         }
       ]
     }
