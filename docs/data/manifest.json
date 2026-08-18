@@ -76,9 +76,26 @@
           ]
         },
         {
-          "id": "temporary",
-          "name": "Coming Soon",
-          "tools": []
+          "id": "f2f",
+          "name": "Field To Finish",
+          "tools": [
+            {
+              "id": "f2fnet10",
+              "name": "Field To Finish for AutoCAD 2027",
+              "version": "0.0.7",
+              "runtime": ".NET 10",
+              "compatibility": [
+                {
+                  "products": [
+                    "AutoCAD",
+                    "Civil 3D"
+                  ],
+                  "minimumYear": 2026,
+                  "maximumYear": 2027
+                }
+              ]
+            }
+          ]
         }
       ]
     },
