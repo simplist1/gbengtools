@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ApplicationPackage SchemaVersion="1.0"
+                    AutodeskProduct="AutoCAD"
+                    Name="Geodeta Field To Finish"
+                    AppVersion="0.0.7"
+                    ProductCode="{F2F00007-2026-2027-GEOD-ETAF2F000007}"
+                    UpgradeCode="{F2F00000-0000-0000-GEOD-ETAF2F000000}">
+  <CompanyDetails Name="Geodeta" />
+  <Components Description="Field To Finish .NET 10 plugin for AutoCAD/Civil 3D 2026.2 and 2027">
+    <RuntimeRequirements OS="Win64" Platform="AutoCAD*" SeriesMin="R25.1" SeriesMax="R26.0" />
+    <ComponentEntry AppName="Geodeta Field To Finish"
+                    ModuleName="./Contents/Windows/F2F.dll"
+                    AppDescription="Geodeta Field To Finish"
+                    LoadOnAutoCADStartup="True" />
+  </Components>
+</ApplicationPackage>
