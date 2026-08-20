@@ -16,11 +16,7 @@
               "runtime": "VBA",
               "compatibility": [
                 {
-                  "products": [
-                    "AutoCAD",
-                    "Civil 3D",
-                    "Land Desktop"
-                  ],
+                  "products": ["AutoCAD", "Civil 3D", "Land Desktop"],
                   "minimumYear": 2000,
                   "maximumYear": 2026
                 }
@@ -33,10 +29,7 @@
               "runtime": ".NET 4.7",
               "compatibility": [
                 {
-                  "products": [
-                    "AutoCAD",
-                    "Civil 3D"
-                  ],
+                  "products": ["AutoCAD", "Civil 3D"],
                   "minimumYear": 2020,
                   "maximumYear": 2020
                 }
@@ -49,10 +42,7 @@
               "runtime": ".NET 10",
               "compatibility": [
                 {
-                  "products": [
-                    "AutoCAD",
-                    "Civil 3D"
-                  ],
+                  "products": ["AutoCAD", "Civil 3D"],
                   "minimumYear": 2027,
                   "maximumYear": 2027
                 }
@@ -65,9 +55,7 @@
               "runtime": "LISP",
               "compatibility": [
                 {
-                  "products": [
-                    "AutoCAD LT"
-                  ],
+                  "products": ["AutoCAD LT"],
                   "minimumYear": 2024,
                   "maximumYear": null
                 }
@@ -81,19 +69,25 @@
           "tools": [
             {
               "id": "f2fnet10",
-              "name": "Field To Finish for AutoCAD 2027",
+              "name": "Field To Finish for AutoCAD 2026.2 and 2027",
               "version": "0.0.7",
               "runtime": ".NET 10",
               "compatibility": [
                 {
-                  "products": [
-                    "AutoCAD",
-                    "Civil 3D"
-                  ],
+                  "products": ["AutoCAD", "Civil 3D"],
                   "minimumYear": 2026,
-                  "maximumYear": 2027
+                  "maximumYear": 2027,
+                  "minimumUpdate": "2026.2"
                 }
-              ]
+              ],
+              "install": {
+                "packageType": "bundle",
+                "target": "applicationPlugins",
+                "downloadUrl": "",
+                "sha256": "",
+                "commands": [],
+                "archiveRoot": "Geodeta.F2F.bundle"
+              }
             }
           ]
         }
@@ -112,32 +106,14 @@
               "name": "Polyline Contour Labels",
               "version": "1.0.0",
               "runtime": "LISP",
-              "compatibility": [
-                {
-                  "products": [
-                    "AutoCAD",
-                    "Civil 3D"
-                  ],
-                  "minimumYear": 2020,
-                  "maximumYear": null
-                }
-              ]
+              "compatibility": [{"products":["AutoCAD","Civil 3D"],"minimumYear":2020,"maximumYear":null}]
             },
             {
               "id": "quick-text",
               "name": "Quick Text Style Changer",
               "version": "1.0.0",
               "runtime": "LISP",
-              "compatibility": [
-                {
-                  "products": [
-                    "AutoCAD",
-                    "Civil 3D"
-                  ],
-                  "minimumYear": 2020,
-                  "maximumYear": null
-                }
-              ]
+              "compatibility": [{"products":["AutoCAD","Civil 3D"],"minimumYear":2020,"maximumYear":null}]
             }
           ]
         },
@@ -150,30 +126,14 @@
               "name": "KeyZone Helper",
               "version": "1.0.0",
               "runtime": "LISP",
-              "compatibility": [
-                {
-                  "products": [
-                    "Civil 3D"
-                  ],
-                  "minimumYear": 2020,
-                  "maximumYear": null
-                }
-              ]
+              "compatibility": [{"products":["Civil 3D"],"minimumYear":2020,"maximumYear":null}]
             },
             {
               "id": "quick-10",
               "name": "Quick 10 Scale",
               "version": "1.0.0",
               "runtime": "LISP",
-              "compatibility": [
-                {
-                  "products": [
-                    "Civil 3D"
-                  ],
-                  "minimumYear": 2020,
-                  "maximumYear": null
-                }
-              ]
+              "compatibility": [{"products":["Civil 3D"],"minimumYear":2020,"maximumYear":null}]
             }
           ]
         },
@@ -186,32 +146,14 @@
               "name": "Least Squares Adjust Objects",
               "version": "1.0.0",
               "runtime": "LISP",
-              "compatibility": [
-                {
-                  "products": [
-                    "AutoCAD",
-                    "Civil 3D"
-                  ],
-                  "minimumYear": 2020,
-                  "maximumYear": null
-                }
-              ]
+              "compatibility": [{"products":["AutoCAD","Civil 3D"],"minimumYear":2020,"maximumYear":null}]
             },
             {
               "id": "easy-spacing",
               "name": "Easy Spacing",
               "version": "1.0.0",
               "runtime": "LISP",
-              "compatibility": [
-                {
-                  "products": [
-                    "AutoCAD",
-                    "Civil 3D"
-                  ],
-                  "minimumYear": 2020,
-                  "maximumYear": null
-                }
-              ]
+              "compatibility": [{"products":["AutoCAD","Civil 3D"],"minimumYear":2020,"maximumYear":null}]
             }
           ]
         }
@@ -226,20 +168,14 @@
           "name": "AutoCAD Icon Studio",
           "version": "1.0.0",
           "runtime": ".EXE",
-          "windowsSupport": [
-            "Windows 10",
-            "Windows 11"
-          ]
+          "windowsSupport": ["Windows 10", "Windows 11"]
         },
         {
           "id": "rsr",
           "name": "RAW + SURVEY Reviewer",
           "version": "1.0.0",
           "runtime": ".EXE",
-          "windowsSupport": [
-            "Windows 10",
-            "Windows 11"
-          ]
+          "windowsSupport": ["Windows 10", "Windows 11"]
         }
       ]
     }
