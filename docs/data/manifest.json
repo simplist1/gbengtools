@@ -83,9 +83,9 @@
               "install": {
                 "packageType": "bundle",
                 "target": "applicationPlugins",
-                "downloadUrl": "",
-                "sha256": "",
-                "commands": [],
+                "downloadUrl": "https://raw.githubusercontent.com/simplist1/gbengtools/main/packages/f2f/Geodeta.F2F_0.0.7_FINAL.zip.b64",
+                "sha256": "4a748abaf91cc4ce880b6a8b3e6691a4f323536f7083b58baaba1cc5b1ea3ba9",
+                "commands": ["F2FSETUP", "F2FAUTO", "F2FCLEAR", "F2FSTATUS"],
                 "archiveRoot": "Geodeta.F2F.bundle"
               }
             }
